@@ -129,10 +129,55 @@ get_ram_go <- function() {
   }, error = function(e) NA_real_)
 }
 
+get_os_name <- function() {
+  os <- Sys.info()["sysname"]
+  tryCatch({
+    if (os == "Windows") {
+      # Sys.info()["release"] renvoie "10" pour Win10 ET Win11 (noyau NT 10.0)
+      # Le build >= 22000 identifie Windows 11
+      raw   <- system(
+        'reg query "HKLM\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion" /v CurrentBuildNumber',
+        intern = TRUE, ignore.stderr = TRUE
+      )
+      line  <- raw[grepl("CurrentBuildNumber", raw, ignore.case = TRUE)]
+      build <- suppressWarnings(as.integer(trimws(gsub(".*\\s+", "", line[1]))))
+      if (!is.na(build) && build >= 22000L) "Windows 11" else "Windows 10"
+    } else if (os == "Darwin") {
+      ver <- trimws(system("sw_vers -productVersion", intern = TRUE)[1])
+      paste("macOS", ver)
+    } else {
+      if (file.exists("/etc/os-release")) {
+        lines  <- readLines("/etc/os-release")
+        pretty <- lines[grepl("^PRETTY_NAME=", lines)]
+        if (length(pretty) > 0L)
+          gsub('^PRETTY_NAME="|"$', "", pretty[1])
+        else
+          paste(Sys.info()["sysname"], Sys.info()["release"])
+      } else {
+        paste(Sys.info()["sysname"], Sys.info()["release"])
+      }
+    }
+  }, error = function(e) paste(Sys.info()["sysname"], Sys.info()["release"]))
+}
+
 cpu_name <- get_cpu_name()
 ram_go   <- get_ram_go()
+os_name  <- get_os_name()
 
 t_debut_str <- format(Sys.time(), "%d/%m/%Y %H:%M:%S")
+
+# Lire le KNITR_TOTAL de la session précédente AVANT d'écraser le fichier
+.prev_knitr_total_html <- tryCatch({
+  lignes_prev <- readLines("compilation_stats_html.txt")
+  ligne_kt    <- lignes_prev[grepl("^\\[KNITR_TOTAL\\]", lignes_prev)]
+  if (length(ligne_kt) > 0L) {
+    val <- suppressWarnings(
+      as.numeric(gsub("[^0-9.]", "", ligne_kt[length(ligne_kt)]))
+    )
+    if (length(val) == 1L && !is.na(val)) val else NA_real_
+  } else NA_real_
+}, error = function(e) NA_real_)
+assign(".prev_knitr_total_html", .prev_knitr_total_html, envir = .GlobalEnv)
 
 # Initialisation du fichier de stats
 sysinfo_vec <- data.frame(
@@ -141,7 +186,7 @@ sysinfo_vec <- data.frame(
                 "RAM totale (Go)", "Début phase knitr"),
   Valeur = c(
     .Platform$OS.type,
-    paste(Sys.info()["sysname"], Sys.info()["release"]),
+    os_name,
     R.version.string,
     cpu_name,
     parallel::detectCores(),
@@ -203,6 +248,11 @@ Au **CNAM**,
 
 Permettre à un auditeur qui approche la cinquantaine, au cœur d'une vie active intense, de se former aux méthodes quantitatives avancées, à la data science, à R et à Quarto --- c'est un acte de foi dans l'idée que l'éducation n'a pas d'âge et que l'apprentissage tout au long de la vie n'est pas un slogan mais une réalité concrète. Le CNAM incarne cette conviction avec une constance exemplaire depuis plus de deux siècles. Il est difficile d'exprimer combien ce dispositif représente, pour des professionnels comme moi, une chance inestimable de rester dans la course d'un monde qui accélère. Merci d'exister, merci de persévérer, merci d'accueillir ceux que les circuits classiques ne peuvent plus atteindre.
 
+<div style="text-align: right; margin-top: 1.5em; font-style: italic; color: #555;">
+*Alban VIDELOUP*<br>
+*Paris, `r format(Sys.Date(), "%d %B %Y")`*
+</div>
+
 ---
 
 # Introduction générale {#sec-intro-generale}
@@ -218,6 +268,11 @@ Ce document fusionne trois volets complémentaires du cours :
 3. **Volet 3 --- Méthodes de clustering :** reproduction et adaptation du code R de l'article de référence *"A Survey of Popular R Packages for Cluster Analysis"* (Flynt & Dean, 2016), couvrant K-means, classification hiérarchique ascendante et modèles de mélanges gaussiens (Mclust).
 
 Le fil conducteur est la **rigueur reproductible** : chaque résultat est produit directement par le code R présenté, dans un document Quarto compilable.
+
+::: {.callout-tip}
+## Note sur le choix du format HTML
+Ce document est la version HTML du rapport. Si le PDF fait appel à LaTeX pour la mise en forme typographique (boîtes, tableaux, formules avancées), la version HTML exploite les callouts Quarto, MathJax et les outils `htmltools` pour un rendu interactif et responsive. Les formules mathématiques affichent ici à la fois leur **code source LaTeX** (pour l'apprentissage) et leur **rendu MathJax**. Le couple Quarto + HTML constitue le meilleur des deux mondes : lisibilité du Markdown, puissance de MathJax, et navigabilité hypertexte.
+:::
 
 Toutes les analyses sont réalisées avec R [@r2024] et Quarto [@quarto2024].
 
@@ -237,7 +292,10 @@ Ce premier volet est une introduction pratique au langage **R** et à l'environn
 2. **Maîtriser les bases de R et du Tidyverse** : manipulation de données, statistiques descriptives, visualisation.
 3. **Appliquer ces outils à un cas réel** : les données de tirage du **Keno FDJ**, avec modélisation probabiliste et simulation de Monte-Carlo.
 
-> **Analogie pédagogique :** Quarto, c'est comme un cahier de laboratoire numérique : on y écrit ses observations (le texte), on y insère ses protocoles (le code R), et les résultats apparaissent automatiquement à la compilation. Plus besoin de copier-coller les sorties manuellement.
+::: {.callout-note}
+## Analogie pédagogique
+Quarto, c'est comme un cahier de laboratoire numérique : on y écrit ses observations (le texte), on y insère ses protocoles (le code R), et les résultats apparaissent automatiquement à la compilation. Plus besoin de copier-coller les sorties manuellement.
+:::
 
 ---
 
@@ -247,17 +305,37 @@ Quarto repose sur la syntaxe **Markdown** pour la mise en forme du texte. On peu
 
 ### Formules mathématiques
 
-**L'intégrale de Gauss** — résultat fondamental en probabilité et statistique :
+Pour chaque formule, le bloc grisé montre le **code LaTeX source** tel qu'il apparaît dans le document `.qmd`, et le rendu est affiché juste en dessous. Cette double présentation est précieuse pour l'apprentissage : on voit à la fois ce qu'on écrit et ce que MathJax produit.
+
+**L'intégrale de Gauss** --- résultat fondamental en probabilité et théorie des fonctions, qui établit que l'aire sous la courbe en cloche $e^{-x^2}$ vaut exactement $\sqrt{\pi}$ :
+
+```latex
+$$\int_{-\infty}^{+\infty} e^{-x^2}\, dx = \sqrt{\pi}$$
+```
 
 $$\int_{-\infty}^{+\infty} e^{-x^2}\, dx = \sqrt{\pi}$$
 
-**La Transformée de Fourier (décomposition)** — elle extrait les fréquences d'un signal :
+où $x \in \mathbb{R}$ est la variable d'intégration et $e^{-x^2}$ est la fonction gaussienne non normalisée. C'est cette identité qui fonde, après normalisation par $\sqrt{2\pi}\sigma$, la densité de la loi normale.
+
+**La Transformée de Fourier (décomposition)** --- extrait les fréquences d'un signal temporel pour révéler son contenu spectral :
+
+```latex
+$$\hat{f}(\xi) = \int_{-\infty}^{+\infty} f(t)\, e^{-i 2\pi \xi t}\, dt$$
+```
 
 $$\hat{f}(\xi) = \int_{-\infty}^{+\infty} f(t)\, e^{-i 2\pi \xi t}\, dt$$
 
-**La Transformée de Fourier inverse (reconstruction)** — elle reconstitue le signal à partir de sa « recette » fréquentielle :
+où $f(t)$ est le signal d'origine, $\hat{f}(\xi)$ sa transformée, et $e^{-i 2\pi \xi t}$ le noyau exponentiel complexe qui projette le signal sur chaque fréquence. La constante $i$ désigne l'unité imaginaire ($i^2 = -1$).
+
+**La Transformée de Fourier inverse (reconstruction)** --- opération réciproque qui reconstruit le signal temporel à partir de son spectre :
+
+```latex
+$$f(t) = \int_{-\infty}^{+\infty} \hat{f}(\xi)\, e^{i 2\pi \xi t}\, d\xi$$
+```
 
 $$f(t) = \int_{-\infty}^{+\infty} \hat{f}(\xi)\, e^{i 2\pi \xi t}\, d\xi$$
+
+où les rôles de $t$ et $\xi$ sont inversés par rapport à la transformée directe : on intègre sur la variable de fréquence $\xi$, et le signe du noyau exponentiel passe de $-i$ à $+i$ (ce qui assure la réversibilité de l'opération).
 
 ---
 
@@ -300,6 +378,11 @@ Par exemple, on peut citer l'article fondateur du Tidyverse : @wickham2019.
 ## Présentation
 
 Le **Tidyverse** est un écosystème de packages R conçu pour la *data science*. Tous ces packages partagent une même philosophie, une même grammaire et des structures de données communes (les *tibbles*).
+
+::: {.callout-note}
+## Analogie pédagogique
+Le Tidyverse, c'est comme une boîte à outils bien organisée : chaque outil a un rôle précis, ils fonctionnent tous ensemble, et on apprend une fois la logique commune plutôt que de mémoriser des syntaxes disparates.
+:::
 
 Parmi les packages les plus utilisés :
 
@@ -397,6 +480,11 @@ dfcars |>
     y        = "Nombre de véhicules"
   )
 ```
+
+::: {.callout-warning}
+## Point d'attention
+En version HTML, le thème ggplot2 est configuré globalement dans le chunk `setup` via `theme_set()`. Il n'est pas nécessaire d'ajouter `+ theme_minimal()` à chaque graphique --- le thème s'applique automatiquement à tous les plots du document.
+:::
 
 ---
 
@@ -503,7 +591,23 @@ keno_202511 |>
 
 ## Palmarès des numéros --- style FDJ {#sec-palmares}
 
-Ce tableau reproduit le style du **palmarès des numéros** affiché sur le site de la FDJ.
+Ce tableau s'inspire du **palmarès des numéros** du site FDJ. Pour chaque numéro de 1 à 56, on affiche le nombre de sorties, le pourcentage de présence et la date de dernière sortie. La boîte ci-dessous précise la formule de calcul utilisée et fournit la référence théorique pour interpréter correctement les valeurs affichées.
+
+::: {.callout-note}
+## Rappel théorique
+
+**Calcul du pourcentage de présence.** Pour chaque numéro $i \in \{1, \ldots, 56\}$, on note $S_i$ le nombre de tirages dans lesquels il est sorti. Avec $N$ tirages historiques disponibles, le pourcentage de présence du numéro $i$ est défini par :
+
+$$\mathrm{Pct}_i = \frac{S_i}{N} \times 100$$
+
+où $S_i$ est le nombre de sorties du numéro $i$ et $N$ le nombre total de tirages. Cette formule est strictement **identique au calcul officiel publié par la FDJ** sur sa page de statistiques Keno.
+
+**Référence théorique.** À chaque tirage, 16 boules sont tirées parmi 56. La probabilité qu'un numéro donné figure dans un tirage est donc :
+
+$$p_{\text{théo}} = \frac{16}{56} \approx 0{,}2857 = \mathbf{28{,}57\,\%}$$
+
+**Lecture du tableau.** Un numéro affichant un pourcentage proche de **28,57 %** est conforme à la loi théorique. Un écart vers le haut indique un numéro *sur-représenté* sur la période, vers le bas un numéro *sous-représenté*. Ces écarts relèvent de la fluctuation d'échantillonnage --- ils n'ont aucune valeur prédictive pour les tirages futurs.
+:::
 
 ```{r palmares-fdj}
 #| label: palmares-fdj
@@ -675,16 +779,20 @@ freq_boules_plot |>
 
 ## La loi hypergéométrique
 
-Le Keno est un tirage **sans remise** : les boules ne sont pas replacées dans l'urne. La distribution de probabilité qui modélise ce type de tirage est la **loi hypergéométrique** :
+::: {.callout-note}
+## Rappel théorique
+Le Keno est un tirage **sans remise** : les boules ne sont pas replacées dans l'urne. La distribution de probabilité adaptée est la **loi hypergéométrique**.
+
+Code LaTeX de la formule :
+
+```latex
+$$P(X = x) = \frac{\binom{K}{x}\binom{N-K}{n-x}}{\binom{N}{n}}$$
+```
 
 $$P(X = x) = \frac{\binom{K}{x}\binom{N-K}{n-x}}{\binom{N}{n}}$$
 
-Où :
-
-- $N = 56$ : taille totale de l'urne (boules numérotées de 1 à 56)
-- $K = 16$ : nombre de boules tirées par le Keno
-- $n = 10$ : nombre de numéros cochés par le joueur
-- $x$ : nombre de numéros cochés qui correspondent à des boules tirées
+avec : $N = 56$ (taille de l'urne), $K = 16$ (boules tirées par le Keno), $n = 10$ (numéros cochés par le joueur), $x$ (nombre de bons numéros).
+:::
 
 La fonction R correspondante est `dhyper(x, m, n, k)` où `m` est le nombre de boules « succès » dans l'urne, `n` le nombre de boules « échec », et `k` le nombre de tirages.
 
@@ -899,6 +1007,12 @@ tbl_obj
 ## Rappel théorique
 Pour chaque grille (nombre de numéros cochés $n$), l'espérance de gain se calcule en sommant les gains pondérés par leurs probabilités, sur toutes les combinaisons gagnantes :
 
+Code LaTeX de la formule :
+
+```latex
+$$E_n[G] = \sum_{x \in \mathcal{G}_n} g(x) \cdot p(x)$$
+```
+
 $$E_n[G] = \sum_{x \in \mathcal{G}_n} g(x) \cdot p(x)$$
 
 où $\mathcal{G}_n$ est l'ensemble des valeurs de $x$ donnant lieu à un gain pour la grille $n$.
@@ -989,13 +1103,22 @@ Toutes les barres sont **sous la ligne pointillée rouge** (la mise de 1 €), c
 
 # Espérance de gain {#sec-esperance}
 
-## Définition
+## Définition et formule
 
-L'**espérance mathématique** de gain est la valeur moyenne que le joueur peut espérer gagner par tirage :
+::: {.callout-note}
+## Rappel théorique
+L'**espérance mathématique** de gain est la valeur moyenne que le joueur peut espérer gagner par tirage. Elle se calcule comme la somme des gains pondérés par leurs probabilités :
+
+Code LaTeX de la formule :
+
+```latex
+$$E[G] = \sum_{x=0}^{10} g(x) \cdot p(x)$$
+```
 
 $$E[G] = \sum_{x=0}^{10} g(x) \cdot p(x)$$
 
 où $g(x)$ est le gain pour $x$ bonnes boules, et $p(x)$ la probabilité d'en obtenir exactement $x$.
+:::
 
 ## Calcul avec R
 
@@ -1129,7 +1252,10 @@ Imaginez que l'on vous donne un grand sac contenant mille pièces de puzzle mél
 
 En statistique, le **clustering** (ou *classification non supervisée*) consiste à regrouper automatiquement des observations similaires **sans connaitre à l'avance** les étiquettes ou catégories.
 
-> **Analogie pédagogique :** Un algorithme de clustering appliqué à votre liste de courses pourrait découvrir, sans qu'on le lui dise, que vous achetez toujours ensemble des pâtes, de la sauce tomate et du parmesan — et créer un "groupe culinaire" reflétant ce comportement. C'est de la connaissance extraite automatiquement de l'observation brute.
+::: {.callout-note}
+## Analogie pédagogique
+Un algorithme de clustering appliqué à votre liste de courses pourrait découvrir, sans qu'on le lui dise, que vous achetez toujours ensemble des pâtes, de la sauce tomate et du parmesan — et créer un "groupe culinaire" reflétant ce comportement. C'est de la connaissance extraite automatiquement de l'observation brute.
+:::
 
 ## Bref panorama historique
 
@@ -1192,17 +1318,42 @@ La simulation est le mannequin de crash-test de la statistique : on connait exac
 
 ## Fondements mathématiques : la loi normale multivariée
 
-**La loi normale univariée** (loi de Gauss) :
+### La loi normale univariée
+
+La loi normale (loi de Gauss) est la distribution de probabilité la plus fondamentale en statistique [@johnson2002]. Sa densité est :
+
+```latex
+$$f(x) = \frac{1}{\sigma\sqrt{2\pi}} \exp\!\left(-\frac{(x-\mu)^2}{2\sigma^2}\right), \quad x \in \mathbb{R}$$
+```
 
 $$f(x) = \frac{1}{\sigma\sqrt{2\pi}} \exp\!\left(-\frac{(x-\mu)^2}{2\sigma^2}\right), \quad x \in \mathbb{R}$$
 
-**La loi normale multivariée** $\mathcal{N}_p(\boldsymbol{\mu}, \boldsymbol{\Sigma})$ :
+où $\mu \in \mathbb{R}$ est la moyenne (centre) et $\sigma^2 > 0$ la variance (dispersion).
 
-$$f(\boldsymbol{x}) = \frac{1}{(2\pi)^{p/2}|\boldsymbol{\Sigma}|^{1/2}} \exp\!\left(-\frac{1}{2}(\boldsymbol{x}-\boldsymbol{\mu})^\top\boldsymbol{\Sigma}^{-1}(\boldsymbol{x}-\boldsymbol{\mu})\right)$$
+### La loi normale multivariée
 
-**Le modèle de mélange gaussien** (K = 3 composantes) :
+Pour $p$ variables observées simultanément, on généralise avec la loi normale multivariée $\mathcal{N}_p(\boldsymbol{\mu}, \boldsymbol{\Sigma})$, de densité :
 
-$$f(\boldsymbol{x}) = \sum_{k=1}^{3} \pi_k \cdot \mathcal{N}_2(\boldsymbol{x}\,|\,\boldsymbol{\mu}_k, \boldsymbol{\Sigma}_k)$$
+```latex
+$$f(\boldsymbol{x}) = \frac{1}{(2\pi)^{p/2}|\boldsymbol{\Sigma}|^{1/2}} \exp\!\left(-\frac{1}{2}(\boldsymbol{x}-\boldsymbol{\mu})^\top\boldsymbol{\Sigma}^{-1}(\boldsymbol{x}-\boldsymbol{\mu})\right), \quad \boldsymbol{x} \in \mathbb{R}^p$$
+```
+
+$$f(\boldsymbol{x}) = \frac{1}{(2\pi)^{p/2}|\boldsymbol{\Sigma}|^{1/2}} \exp\!\left(-\frac{1}{2}(\boldsymbol{x}-\boldsymbol{\mu})^\top\boldsymbol{\Sigma}^{-1}(\boldsymbol{x}-\boldsymbol{\mu})\right), \quad \boldsymbol{x} \in \mathbb{R}^p$$
+
+Les paramètres clés sont :
+
+- $\boldsymbol{\mu} = (\mu_1, \ldots, \mu_p)^\top$ : le vecteur de moyennes (centre du nuage de points).
+- $\boldsymbol{\Sigma}$ : la matrice de covariance $p \times p$, symétrique définie positive, qui décrit la forme et l'orientation du nuage.
+
+### Le modèle de mélange gaussien
+
+Notre jeu de données sera un mélange de $K = 3$ gaussiennes bivariées. La densité totale du mélange est :
+
+```latex
+$$f(\boldsymbol{x}) = \sum_{k=1}^{K} \pi_k \cdot \mathcal{N}_2(\boldsymbol{x}\,|\,\boldsymbol{\mu}_k, \boldsymbol{\Sigma}_k), \qquad \sum_{k=1}^{K} \pi_k = 1,\; \pi_k > 0$$
+```
+
+$$f(\boldsymbol{x}) = \sum_{k=1}^{K} \pi_k \cdot \mathcal{N}_2(\boldsymbol{x}\,|\,\boldsymbol{\mu}_k, \boldsymbol{\Sigma}_k), \qquad \sum_{k=1}^{K} \pi_k = 1,\; \pi_k > 0$$
 
 ```{r tbl-params-simulation}
 #| label: tbl-params-simulation
@@ -1224,11 +1375,26 @@ data.frame(
 
 La matrice de covariance elliptique du Groupe 3 est :
 
+```latex
+$$\boldsymbol{\Sigma}_{ell} = \begin{pmatrix} 2 & 1.3 \\ 1.3 & 1 \end{pmatrix}$$
+```
+
 $$\boldsymbol{\Sigma}_{ell} = \begin{pmatrix} 2 & 1.3 \\ 1.3 & 1 \end{pmatrix}$$
 
-Elle traduit une variance plus forte selon $V_1$ et une corrélation positive entre $V_1$ et $V_2$, ce qui crée l'ellipse inclinée à environ 45 degrés.
+Elle traduit une variance plus forte selon $V_1$ et une corrélation positive entre $V_1$ et $V_2$ (covariance = $1.3 > 0$), ce qui crée l'ellipse inclinée à environ 45 degrés.
 
 ## Simulation des variables continues
+
+### Vers une lecture plus nette : l'enveloppe convexe
+
+Pour obtenir une frontière "physique" nette autour de chaque groupe, nous utilisons le concept d'**enveloppe convexe** (*Convex Hull*). Mathématiquement, l'enveloppe convexe d'un ensemble de points est le plus petit polygone convexe contenant tous ces points.
+
+::: {.callout-note}
+## Analogie pédagogique
+Imaginez que chaque point de notre graphique soit un clou planté sur une planche. L'enveloppe convexe correspond à la forme que prendrait un élastique tendu que l'on relâcherait autour de tous les clous d'une même couleur. L'élastique s'appuierait uniquement sur les points les plus extérieurs, créant une frontière parfaite et sans "creux".
+:::
+
+### Reproduction des couleurs originales de Flynt & Dean (2016)
 
 ```{r fig-simul-donnees}
 #| label: fig-simul-donnees
@@ -1289,11 +1455,18 @@ Le K-means est l'algorithme de clustering le plus célèbre et le plus utilisé 
 
 > *Chaque individu appartient au groupe dont le centre (la moyenne) lui est le plus proche.*
 
-> **Analogie :** Imaginez 3 personnes dans une salle bondée, chacune criant : "Venez vers moi !" Chaque individu rejoint la plus proche. Puis chaque personne se déplace au centre géographique de son groupe. On recommence jusqu'à stabilisation. C'est exactement l'algorithme K-means.
+::: {.callout-note}
+## Analogie pédagogique
+Imaginez 3 personnes dans une salle bondée, chacune criant : "Venez vers moi !" Chaque individu rejoint la plus proche. Puis chaque personne se déplace au centre géographique de son groupe. On recommence jusqu'à stabilisation. C'est exactement l'algorithme K-means.
+:::
 
 ### Formalisation mathématique
 
-K-means minimise la **somme des distances au carré intra-cluster** (WSS) :
+K-means minimise la **somme des distances au carré intra-cluster** (WSS, *Within-Cluster Sum of Squares*) :
+
+```latex
+$$\mathrm{WSS} = \sum_{k=1}^{K} \sum_{\boldsymbol{x}_{i} \in C_{k}} \lVert \boldsymbol{x}_{i} - \boldsymbol{\mu}_{k} \rVert^{2}$$
+```
 
 $$\mathrm{WSS} = \sum_{k=1}^{K} \sum_{\boldsymbol{x}_{i} \in C_{k}} \lVert \boldsymbol{x}_{i} - \boldsymbol{\mu}_{k} \rVert^{2}$$
 
@@ -1529,49 +1702,107 @@ Si le Groupe 1 valide l'efficacité de l'approche dans des conditions simples, l
 
 La **classification hiérarchique ascendante** (CHA) construit un **dendrogramme** — un arbre de fusion représentant quels individus ou groupes ont été réunis, et à quelle distance [@everitt2011]. Elle ne requiert pas de spécifier $K$ à l'avance.
 
-**Liaison moyenne (UPGMA) :**
+La liaison moyenne (UPGMA) définit la distance entre deux groupes $A$ et $B$ comme la moyenne de toutes les distances inter-individuelles :
+
+```latex
+$$d(A, B) = \frac{1}{|A| \cdot |B|} \sum_{i \in A} \sum_{j \in B} d(x_i, x_j)$$
+```
 
 $$d(A, B) = \frac{1}{|A| \cdot |B|} \sum_{i \in A} \sum_{j \in B} d(x_i, x_j)$$
 
 ```{r fig-dendro-simple}
 #| label: fig-dendro-simple
+#| fig-cap: "Dendrogramme de classification hiérarchique (liaison moyenne, 600 individus). La hauteur d'une jonction représente la distance de fusion. Pour K = 3, on coupe au niveau de la 3e plus grande fusion."
 
-d_mat <- dist(X_data, method = "euclidean")
-h_avg <- hclust(d_mat, method = "average")
+d_mat   <- dist(X_data, method = "euclidean")
+h_avg   <- hclust(d_mat, method = "average")
 
-ggdendrogram(h_avg, rotate = FALSE, size = 0.25) +
-  labs(title    = "Dendrogramme de classification hiérarchique",
-       subtitle = "Liaison moyenne (UPGMA) --- 600 individus") +
-  theme(axis.text.x = element_blank(), axis.ticks.x = element_blank())
+ggdendrogram(h_avg, rotate = FALSE, size = 0.15) +
+  labs(
+    title    = "Dendrogramme de classification hiérarchique",
+    subtitle = "Liaison moyenne (UPGMA) --- 600 individus"
+  ) +
+  theme(axis.text.x  = element_blank(),
+        axis.ticks.x = element_blank())
 ```
+
+### La méthode hiérarchique CAH sur les données simulées
+
+Dans l'article de Flynt & Dean (2016), la méthode du lien moyen peut s'avérer encore moins performante que le K-means sur ces structures, entraînant un taux d'erreur avoisinant les 30 %. La raison fondamentale : la CAH fusionne des sous-groupes de façon **irréversible** (*greedy*), sans pouvoir réassigner un point mal placé.
 
 ```{r fig-dendro-color}
 #| label: fig-dendro-color
+#| fig-cap: "Dendrogramme (lien moyen, 600 individus) avec découpage en 3 clusters selon les couleurs de l'article."
 
 res.hc <- hclust(dist(X_data), method = "average")
 
-fviz_dend(res.hc, k = 3, cex = 0.5, rect = TRUE, rect_fill = TRUE,
-          palette = c("black", "red", "green3"),
-          main = "Dendrogramme (Average Linkage)",
-          xlab = "Observations", ylab = "Distance Euclidienne",
-          ggtheme = theme_minimal()) +
-  theme(axis.text.x = element_blank())
+fviz_dend(res.hc,
+          k          = 3,
+          cex        = 0.15,
+          lwd        = 0.30,
+          rect       = TRUE,
+          rect_fill  = TRUE,
+          rect_lty   = 1,
+          palette    = c("black", "red", "green3"),
+          main       = "Dendrogramme (Average Linkage)",
+          xlab       = "Observations",
+          ylab       = "Distance Euclidienne",
+          ggtheme    = theme_minimal()) +
+  scale_linewidth(range = c(0.30, 0.30)) +
+  theme(
+    axis.text.x     = element_blank(),
+    legend.position = "none"
+  )
 ```
 
-```{r fig-dendro-circulaire}
-#| label: fig-dendro-circulaire
+### La version circulaire
 
-fviz_dend(res.hc, k = 3, type = "circular", cex = 0.3, lwd = 0.5,
-          rect = TRUE, rect_fill = TRUE,
-          palette = c("black", "red", "green3"),
-          main = "Dendrogramme Circulaire (Average Linkage)",
-          ggtheme = theme_minimal()) +
-  theme(axis.text.x = element_blank(), axis.text.y = element_blank(),
-        axis.title.y = element_blank(), panel.grid = element_blank(),
-        legend.position = "none")
+```{r fig-dendro-circulaire}
+#| label: fig-dendro-circular
+#| fig-cap: "Dendrogramme circulaire (lien moyen, 600 individus) avec découpage en 3 clusters."
+
+library(patchwork)
+library(grid)
+
+# 1. Construction du plot
+p_circ <- fviz_dend(res.hc,
+                    k           = 3,
+                    type        = "circular",
+                    cex         = 0.15,
+                    rect        = TRUE,
+                    rect_fill   = TRUE,
+                    palette     = c("black", "red", "green3"),
+                    main        = "Dendrogramme Circulaire (Average Linkage)",
+                    ggtheme     = theme_void())
+
+# 2. Patch linewidth sur tous les segments
+for (i in seq_along(p_circ$layers)) {
+  geom_class <- class(p_circ$layers[[i]]$geom)
+  if (any(geom_class %in% c("GeomSegment", "GeomCurve", "GeomPath"))) {
+    p_circ$layers[[i]]$aes_params$linewidth <- 0.30
+    p_circ$layers[[i]]$aes_params$size      <- 0.30
+  }
+}
+
+p_circ <- p_circ +
+  scale_linewidth(range = c(0.30, 0.30)) +
+  theme_void() +
+  theme(legend.position = "none")
+
+# 3. Suppression des labels radiaux
+gb <- ggplot_build(p_circ)
+gb$layout$panel_params[[1]]$r.labels <- character(0)
+gb$layout$panel_params[[1]]$r.major  <- numeric(0)
+gb$layout$panel_params[[1]]$r.minor  <- numeric(0)
+gt <- ggplot_gtable(gb)
+
+# 4. Rendu compatible Quarto
+wrap_elements(gt)
 ```
 
 ### Le calcul (30 % d'erreur)
+
+Pour retrouver les chiffres de l'article, il faut regarder si les points de **différentes couleurs** sont mélangés dans le même cluster :
 
 ```{r calcul-cah}
 #| label: calcul-cah
@@ -1585,7 +1816,12 @@ Taux de réussite : $(237+177+4)/600 = 69{,}7\,\%$ — Taux d'erreur : $182/600 
 
 ::: {.callout-warning}
 ## Constat de Flynt & Dean
-Alors que le K-means affiche environ 7–10% d'erreur, la méthode hiérarchique dépasse ici les **30% d'erreur**. Les deux groupes sphériques, trop proches, sont fusionnés en un "super-cluster" artificiel par le lien moyen, tandis que le groupe vert (elliptique) se retrouve fragmenté.
+Alors que le K-means affiche environ 7–10 % d'erreur, la méthode hiérarchique dépasse ici les **30 % d'erreur**. Les deux groupes sphériques, trop proches, sont fusionnés en un "super-cluster" artificiel par le lien moyen, tandis que le groupe vert (elliptique) se retrouve fragmenté.
+:::
+
+::: {.callout-tip}
+## À retenir
+La méthode hiérarchique est utile pour explorer la structure des données, mais pour un partitionnement robuste sur ces données simulées, le K-means (et a fortiori Mclust) reste largement supérieur.
 :::
 
 ---
@@ -1596,23 +1832,46 @@ Alors que le K-means affiche environ 7–10% d'erreur, la méthode hiérarchique
 
 ### Du déterministe au probabiliste
 
-Avec K-means et la CHA, chaque individu est assigné à exactement un groupe. Les **Modèles de Mélanges Gaussiens** (GMM) apportent une vision plus honnête :
+Avec K-means et la CHA, chaque individu est assigné à exactement un groupe, sans la moindre nuance. Les **Modèles de Mélanges Gaussiens** (GMM) apportent une vision plus honnête : chaque individu appartient à chaque groupe avec une certaine probabilité. Formellement :
+
+```latex
+$$f(\boldsymbol{x}) = \sum_{k=1}^{K} \pi_k \cdot \mathcal{N}_p(\boldsymbol{x}\,|\,\boldsymbol{\mu}_k, \boldsymbol{\Sigma}_k)$$
+```
 
 $$f(\boldsymbol{x}) = \sum_{k=1}^{K} \pi_k \cdot \mathcal{N}_p(\boldsymbol{x}\,|\,\boldsymbol{\mu}_k, \boldsymbol{\Sigma}_k)$$
 
-> **Analogie :** Le K-means dit : "Tu es un client premium, point." Le GMM dit : "Tu es probablement un client premium à 75%, standard à 20% et VIP à 5%." C'est nettement plus nuancé et réaliste.
+::: {.callout-note}
+## Analogie pédagogique
+Le K-means dit : "Tu es un client premium, point." Le GMM dit : "Tu es probablement un client premium à 75 %, standard à 20 % et VIP à 5 %." C'est nettement plus nuancé et réaliste.
+:::
 
 ### L'algorithme EM
 
 Les paramètres $\{\pi_k, \boldsymbol{\mu}_k, \boldsymbol{\Sigma}_k\}_{k=1}^{K}$ sont estimés par l'algorithme EM [@dempster1977] :
 
-**Étape E :** $r_{ik} = \frac{\pi_k \cdot \mathcal{N}_p(x_i|\,\boldsymbol{\mu}_k, \boldsymbol{\Sigma}_k)}{\sum_{j} \pi_j \cdot \mathcal{N}_p(x_i|\,\boldsymbol{\mu}_j, \boldsymbol{\Sigma}_j)}$
+**Étape E (Expectation)** --- calcul des responsabilités $r_{ik}$ :
 
-**Étape M :** $\hat{\pi}_k = \frac{1}{n}\sum_i r_{ik}$, $\hat{\boldsymbol{\mu}}_k = \frac{\sum_i r_{ik} x_i}{\sum_i r_{ik}}$
+```latex
+$$r_{ik} = \frac{\pi_k \cdot \mathcal{N}_p(x_i|\,\boldsymbol{\mu}_k, \boldsymbol{\Sigma}_k)}{\sum_{j=1}^{K} \pi_j \cdot \mathcal{N}_p(x_i|\,\boldsymbol{\mu}_j, \boldsymbol{\Sigma}_j)}$$
+```
+
+$$r_{ik} = \frac{\pi_k \cdot \mathcal{N}_p(x_i|\,\boldsymbol{\mu}_k, \boldsymbol{\Sigma}_k)}{\sum_{j=1}^{K} \pi_j \cdot \mathcal{N}_p(x_i|\,\boldsymbol{\mu}_j, \boldsymbol{\Sigma}_j)}$$
+
+**Étape M (Maximization)** --- mise à jour des paramètres :
+
+```latex
+$$\hat{\pi}_k = \frac{1}{n}\sum_i r_{ik}, \qquad \hat{\boldsymbol{\mu}}_k = \frac{\sum_i r_{ik} x_i}{\sum_i r_{ik}}, \qquad \hat{\boldsymbol{\Sigma}}_k = \frac{\sum_i r_{ik}(x_i - \hat{\boldsymbol{\mu}}_k)(x_i - \hat{\boldsymbol{\mu}}_k)^\top}{\sum_i r_{ik}}$$
+```
+
+$$\hat{\pi}_k = \frac{1}{n}\sum_i r_{ik}, \qquad \hat{\boldsymbol{\mu}}_k = \frac{\sum_i r_{ik} x_i}{\sum_i r_{ik}}, \qquad \hat{\boldsymbol{\Sigma}}_k = \frac{\sum_i r_{ik}(x_i - \hat{\boldsymbol{\mu}}_k)(x_i - \hat{\boldsymbol{\mu}}_k)^\top}{\sum_i r_{ik}}$$
 
 ### Sélection automatique via le BIC
 
-Mclust [@fraley2002; @scrucca2016] sélectionne automatiquement $K$ et la structure de covariance en maximisant le **BIC** [@schwarz1978] :
+Mclust [@fraley2002; @scrucca2016] sélectionne automatiquement $K$ et la structure de covariance en maximisant le **Critère d'Information Bayésien (BIC)** [@schwarz1978] :
+
+```latex
+$$\text{BIC} = 2\ln\hat{L} - d\ln n$$
+```
 
 $$\text{BIC} = 2\ln\hat{L} - d\ln n$$
 
@@ -1723,6 +1982,12 @@ ggplot(X_mclust_v2, aes(x = V1, y = V2, color = Uncertainty)) +
        color    = "Incertitude")
 ```
 
+**Calcul du taux de réussite Mclust :**
+
+```latex
+$$T_{réussite} = \frac{177 + 229 + 186}{600} = \frac{592}{600} \approx 0{,}9867 \quad \Rightarrow \quad \textbf{98,67\,\%}$$
+```
+
 $$T_{réussite} = \frac{177 + 229 + 186}{600} = \frac{592}{600} \approx 0{,}9867 \quad \Rightarrow \quad \textbf{98,67\,\%}$$
 
 ::: {.callout-tip}
@@ -1793,6 +2058,10 @@ L'utilisation d'un fil conducteur unique — les données de Flynt & Dean (2016)
 
 Pour ces données continues simulées, la hiérarchie de performance est claire :
 
+```latex
+$$\texttt{Mclust} \;>\; \texttt{K-means} \;>\; \texttt{CHA}$$
+```
+
 $$\texttt{Mclust} \;>\; \texttt{K-means} \;>\; \texttt{CHA}$$
 
 | Situation | Méthode recommandée |
@@ -1834,6 +2103,12 @@ Dans tous ces domaines, la leçon reste la même : le clustering révèle une st
 
 ---
 
+# Références bibliographiques {.unnumbered}
+
+:::{#refs}
+:::
+
+---
 
 # Rapport de compilation {.unnumbered}
 
@@ -1869,7 +2144,7 @@ sysinfo_tbl <- data.frame(
                 "RAM totale (Go)", "Début phase knitr"),
   Valeur = c(
     .Platform$OS.type,
-    paste(Sys.info()["sysname"], Sys.info()["release"]),
+    os_name,
     R.version.string,
     cpu_name,
     as.character(parallel::detectCores()),
@@ -1913,12 +2188,11 @@ if (length(timer_lignes) > 0) {
     df_timers$Secondes <- round(df_timers$Secondes, 2)
     total_chunks       <- sum(df_timers$Secondes)
 
-    ligne_knitr     <- lignes[grepl("^\\[KNITR_TOTAL\\]", lignes)]
-    duree_knitr_num <- if (length(ligne_knitr) == 0L) NA_real_ else {
-      val <- suppressWarnings(as.numeric(gsub("[^0-9.]", "",
-               ligne_knitr[length(ligne_knitr)])))
-      if (length(val) == 0L || is.na(val)) NA_real_ else val
-    }
+    duree_knitr_num <- tryCatch(
+      get(".prev_knitr_total_html", envir = .GlobalEnv),
+      error = function(e) NA_real_
+    )
+    duree_knitr_num <- if (length(duree_knitr_num) == 0L || is.na(duree_knitr_num)) NA_real_ else duree_knitr_num
 
     note_bas <- if (!is.na(duree_knitr_num)) {
       sprintf("Somme chunks R : %.2f sec | Phase knitr globale : %.1f sec | Overhead : ~%.1f sec",
@@ -1959,11 +2233,12 @@ if (length(timer_lignes) > 0) {
 
 lignes2 <- tryCatch(readLines("compilation_stats_html.txt"), error = function(e) character(0))
 
-ligne_kt <- lignes2[grepl("^\\[KNITR_TOTAL\\]", lignes2)]
-duree_p2 <- if (length(ligne_kt) == 0L) NA_real_ else {
-  val <- suppressWarnings(as.numeric(gsub("[^0-9.]", "", ligne_kt[length(ligne_kt)])))
-  if (length(val) == 0L || is.na(val)) NA_real_ else val
-}
+# KNITR_TOTAL de la compilation précédente (stocké dans setup avant écrasement)
+duree_p2 <- tryCatch(
+  get(".prev_knitr_total_html", envir = .GlobalEnv),
+  error = function(e) NA_real_
+)
+duree_p2 <- if (length(duree_p2) == 0L || is.na(duree_p2)) NA_real_ else duree_p2
 
 tl2 <- lignes2[grepl("^\\[TIMER\\]", lignes2)]
 parsed2 <- regmatches(tl2,
@@ -1973,13 +2248,13 @@ somme_chunks2 <- sum(sapply(parsed2, function(x) {
 }), na.rm = TRUE)
 
 overhead_io2 <- if (!is.na(duree_p2)) round(duree_p2 - somme_chunks2, 1) else NA_real_
-nd <- "_(disponible à la 2ème compilation)_"
+nd <- "<em>(disponible à la 2<sup>e</sup> compilation)</em>"
 
 bilan_html <- data.frame(
   Phase  = c("Phase 1 — Quarto / pandoc",
              "Phase 2a — Exécution chunks R (somme)",
              "Phase 2b — Overhead knitr (I/O, rendus)",
-             "**Phase 2 — Total knitr mesuré**",
+             "<strong>Phase 2 — Total knitr mesuré</strong>",
              "Phase 3 — Rendu HTML (pandoc)"),
   Mesure = c(
     "Non mesurable",
@@ -2004,6 +2279,11 @@ kbl(bilan_html,
   column_spec(2, bold = TRUE) |>
   row_spec(4, background = "#d4edda")
 ```
+
+::: {.callout-tip}
+## Comment fonctionne le timer ?
+Au lancement de chaque compilation, le chunk `setup` lit le fichier `compilation_stats_html.txt` *avant* de l'écraser, et sauvegarde en mémoire le `[KNITR_TOTAL]` de la session précédente. Cette valeur est ainsi disponible **dès la première compilation** qui suit une compilation complète. Les tableaux affichent donc : la somme des chunks R de la compilation *en cours*, et le total knitr de la compilation *précédente* — ce qui est la seule approche fiable, puisque `timer-final-html` écrit ce total *après* que tous les tableaux ont été générés.
+:::
 
 ```{r timer-final-html}
 #| label: timer-final-html
