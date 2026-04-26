@@ -1,0 +1,2873 @@
+---
+title: "ESD113 --- Probabilités et statistique avec R"
+subtitle: "De l'introduction à R au clustering : Keno, Tidyverse et méthodes non supervisées"
+author: "Auditeur CNAM : Alban VIDELOUP"
+date: today
+date-format: "D MMMM YYYY"
+lang: fr
+
+format:
+  pdf:
+    pdf-engine: pdflatex
+    documentclass: article
+    toc: true
+    toc-depth: 3
+    toc-title: "Table des matières"
+    number-sections: true
+    number-depth: 3
+    colorlinks: true
+    linkcolor: "blue"
+    link-citations: true
+    cite-method: citeproc
+    citecolor: "red"
+    urlcolor: "blue"
+    geometry:
+      - top=25mm
+      - bottom=28mm
+      - left=25mm
+      - right=25mm
+    fontsize: 11pt
+    biblio-style: authoryear
+    include-in-header:
+      text: |
+        \DeclareUnicodeCharacter{1D49}{\textsuperscript{e}}
+        % --------------------------------------------------------
+        % ENCODAGE ET POLICES (pdflatex)
+        % --------------------------------------------------------
+        \usepackage[T1]{fontenc}
+        \usepackage[utf8]{inputenc}
+        \usepackage{lmodern}
+
+        % --------------------------------------------------------
+        % MATHEMATIQUES
+        % --------------------------------------------------------
+        \usepackage{amsmath}
+        \usepackage{amssymb}
+        \usepackage{amsthm}
+        \usepackage{mathtools}
+        \usepackage{bm}
+
+        % --------------------------------------------------------
+        % MISE EN PAGE
+        % --------------------------------------------------------
+        \usepackage{geometry}
+        \usepackage{setspace}
+        \usepackage{microtype}
+        \usepackage{parskip}
+        \usepackage{fancyhdr}
+        \usepackage{float}
+        \usepackage{caption}
+
+        % --------------------------------------------------------
+        % TABLEAUX
+        % --------------------------------------------------------
+        \usepackage{booktabs}
+        \usepackage{longtable}
+        \usepackage{array}
+        \usepackage{multirow}
+        \usepackage{eurosym}
+        \DeclareUnicodeCharacter{20AC}{\euro}
+
+        % --------------------------------------------------------
+        % COULEURS
+        % --------------------------------------------------------
+        \usepackage[dvipsnames,table]{xcolor}
+        \definecolor{bleuscience}{RGB}{0,70,127}
+        \definecolor{bleuclair}{RGB}{220,235,250}
+        \definecolor{grisfonce}{RGB}{80,80,80}
+        \definecolor{orangeaccent}{RGB}{200,100,0}
+        \definecolor{vertaccent}{RGB}{0,120,60}
+        \definecolor{rougefdj}{RGB}{161,43,78}
+
+        % --------------------------------------------------------
+        % BOITES PEDAGOGIQUES (tcolorbox)
+        % IMPORTANT : breakable charge avant le contenu
+        % --------------------------------------------------------
+        \usepackage[most,breakable]{tcolorbox}
+        \tcbuselibrary{skins,breakable}
+
+        \newtcolorbox{analogiebox}{%
+          enhanced,breakable,%
+          colback=bleuclair,%
+          colframe=bleuscience,%
+          fonttitle=\bfseries\sffamily\small,%
+          title={Analogie pédagogique},%
+          left=6pt,right=6pt,top=4pt,bottom=4pt,%
+          arc=3pt,boxrule=0.8pt%
+        }
+
+        \newtcolorbox{attentionbox}{%
+          enhanced,breakable,%
+          colback=orange!10,%
+          colframe=orangeaccent,%
+          fonttitle=\bfseries\sffamily\small,%
+          title={Point d'attention},%
+          left=6pt,right=6pt,top=4pt,bottom=4pt,%
+          arc=3pt,boxrule=0.8pt%
+        }
+
+        \newtcolorbox{retenirbox}{%
+          enhanced,breakable,%
+          colback=green!8,%
+          colframe=vertaccent,%
+          fonttitle=\bfseries\sffamily\small,%
+          title={À retenir},%
+          left=6pt,right=6pt,top=4pt,bottom=4pt,%
+          arc=3pt,boxrule=0.8pt%
+        }
+
+        \newtcolorbox{theorbox}{%
+          enhanced,breakable,%
+          colback=blue!5,%
+          colframe=bleuscience,%
+          fonttitle=\bfseries\sffamily\small,%
+          title={Rappel théorique},%
+          left=6pt,right=6pt,top=4pt,bottom=4pt,%
+          arc=3pt,boxrule=0.8pt%
+        }
+
+        % --------------------------------------------------------
+        % CODE : fvextra évite que le code dépasse les marges
+        % DOIT être chargé après tcolorbox
+        % --------------------------------------------------------
+        \usepackage{fvextra}
+        \DefineVerbatimEnvironment{Highlighting}{Verbatim}{%
+          commandchars=\\\{\},%
+          breaklines=true,%
+          breakanywhere=true,%
+          breaksymbol={},%
+          fontsize=\footnotesize%
+        }
+
+        % --------------------------------------------------------
+        % ALGORITHMES
+        % --------------------------------------------------------
+        \usepackage[ruled,vlined,french]{algorithm2e}
+
+        % --------------------------------------------------------
+        % THEOREMES
+        % --------------------------------------------------------
+        \newtheorem{definition}{Définition}[section]
+        \newtheorem{propriete}{Propriété}[section]
+
+        % --------------------------------------------------------
+        % EN-TETES ET PIEDS DE PAGE
+        % --------------------------------------------------------
+        \pagestyle{fancy}
+        \fancyhf{}
+        \fancyhead[L]{\small\textcolor{bleuscience}%
+          {\textit{ESD113 --- R, Keno \& Clustering}}}
+        \fancyhead[R]{\small\textcolor{grisfonce}{\thepage}}
+        \fancyfoot[C]{\small\textcolor{grisfonce!60}%
+          {CNAM --- ESD113 : Probabilités et statistique avec R}}
+        \renewcommand{\headrulewidth}{0.4pt}
+        \renewcommand{\footrulewidth}{0.2pt}
+        \fancypagestyle{plain}{%
+          \fancyhf{}%
+          \fancyfoot[C]{\small\thepage}%
+          \renewcommand{\headrulewidth}{0pt}%
+        }
+
+        % --------------------------------------------------------
+        % INCLUSION DE PAGES PDF EXTERNES
+        % --------------------------------------------------------
+        \usepackage{pdfpages}
+        \usepackage{graphicx}
+
+        % --------------------------------------------------------
+        % LEGENDES
+        % --------------------------------------------------------
+        \captionsetup{%
+          font=small,%
+          labelfont=bf,%
+          labelsep=period,%
+          justification=centering,%
+          width=0.92\linewidth%
+        }
+
+        % --------------------------------------------------------
+        % INTERLIGNE ET ESPACEMENT
+        % --------------------------------------------------------
+        \setstretch{1.15}
+
+        % --------------------------------------------------------
+        % BIBLIOGRAPHIE COMPACTE
+        % Pandoc/citeproc génère les références dans un environnement
+        % "CSLReferences" avec deux arguments entiers (indent, hangindent).
+        % \usepackage{parskip} insère ~6 pt entre chaque entrée.
+        % On patch simplement \parskip au début de l'environnement
+        % via \preto (etoolbox) sans toucher à la structure interne.
+        % --------------------------------------------------------
+        \usepackage{etoolbox}
+        \AtBeginEnvironment{CSLReferences}{\setlength{\parskip}{2pt}}
+
+bibliography: references_complet.bib
+
+execute:
+  warning: false
+  message: false
+  echo: true
+
+knitr:
+  opts_chunk:
+    tidy: false
+    out.width: "90%"
+    fig.align: "center"
+    fig.pos: "H"
+    comment: "#>"
+---
+
+```{r}
+#| label: setup
+#| echo: false
+
+## ============================================================
+## PACKAGES R — Chargement global pour tout le document
+## ============================================================
+
+library(tidyverse)
+library(conflicted)
+library(scales)
+library(patchwork)
+library(knitr)
+library(kableExtra)
+library(lubridate)
+library(readr)
+library(mvtnorm)
+library(mclust)
+library(ggforce)
+library(viridis)
+library(ggdendro)
+library(broom)
+library(factoextra)
+
+
+
+## Résolution des conflits de namespace
+conflicts_prefer(dplyr::select)
+conflicts_prefer(dplyr::filter)
+conflicts_prefer(dplyr::lag)
+
+## ============================================================
+## THEME GRAPHIQUE GLOBAL POUR PDF
+## ============================================================
+
+theme_pdf <- function() {
+  theme_minimal(base_size = 10) +
+    theme(
+      plot.title    = element_text(face   = "bold",
+                                   size   = 11,
+                                   color  = "#00467F",
+                                   margin = margin(b = 5)),
+      plot.subtitle = element_text(color  = "gray45",
+                                   size   = 8.5,
+                                   margin = margin(b = 8)),
+      panel.grid.minor = element_blank(),
+      panel.grid.major = element_line(color = "gray92",
+                                      linewidth = 0.35),
+      legend.position  = "bottom",
+      legend.text      = element_text(size = 7.5),
+      legend.title     = element_text(size = 8, face = "bold"),
+      axis.title       = element_text(size = 8.5),
+      axis.text        = element_text(size = 7.5),
+      strip.background = element_rect(fill = "gray95", color = NA),
+      strip.text       = element_text(face = "bold", size = 8.5),
+      plot.margin      = margin(4, 4, 4, 4)
+    )
+}
+theme_set(theme_pdf())
+
+options(
+  ggplot2.continuous.colour = "viridis",
+  ggplot2.continuous.fill   = "viridis"
+)
+
+# ============================================================
+# CHRONOMETRE GLOBAL — Phase knitr (exécution des chunks R)
+# t_knitr_start = premier instant mesurable dans R,
+# juste après que knitr a démarré l'exécution du document.
+# Les phases Quarto/pandoc et pdflatex qui précèdent et
+# suivent ne sont PAS capturables depuis R.
+# ============================================================
+t_knitr_start <- proc.time()
+assign(".t_knitr_start", t_knitr_start, envir = .GlobalEnv)
+
+# ── Fonctions portables de détection CPU et RAM ──────────────────────────
+# Compatibles Windows, macOS et Linux sans package supplémentaire.
+
+get_cpu_name <- function() {
+  os <- Sys.info()["sysname"]
+  result <- tryCatch({
+    if (os == "Windows") {
+      raw <- system("wmic cpu get Name /value", intern = TRUE)
+      raw <- raw[grepl("^Name=", raw)]
+      trimws(gsub("^Name=", "", raw[1]))
+    } else if (os == "Darwin") {          # macOS
+      trimws(system("sysctl -n machdep.cpu.brand_string", intern = TRUE)[1])
+    } else {                               # Linux
+      raw <- system("lscpu 2>/dev/null | grep 'Model name'", intern = TRUE)
+      if (length(raw) == 0L) raw <- readLines("/proc/cpuinfo")[
+        grepl("^model name", readLines("/proc/cpuinfo"))][1]
+      trimws(gsub(".*:\\s*", "", raw[1]))
+    }
+  }, error = function(e) NA_character_)
+  if (is.na(result) || nchar(result) == 0) Sys.info()["nodename"] else result
+}
+
+get_ram_go <- function() {
+  os <- Sys.info()["sysname"]
+  tryCatch({
+    if (os == "Windows") {
+      raw <- system("wmic ComputerSystem get TotalPhysicalMemory /value",
+                    intern = TRUE)
+      raw <- raw[grepl("TotalPhysicalMemory=", raw)]
+      round(as.numeric(gsub("TotalPhysicalMemory=", "", raw)) / 1e9, 1)
+    } else if (os == "Darwin") {          # macOS
+      bytes <- as.numeric(system("sysctl -n hw.memsize", intern = TRUE))
+      round(bytes / 1e9, 1)
+    } else {                               # Linux
+      raw <- system("grep MemTotal /proc/meminfo", intern = TRUE)
+      kb  <- as.numeric(gsub("[^0-9]", "", raw))
+      round(kb * 1024 / 1e9, 1)
+    }
+  }, error = function(e) NA_real_)
+}
+
+get_os_name <- function() {
+  os <- Sys.info()["sysname"]
+  tryCatch({
+    if (os == "Windows") {
+      # Sys.info()["release"] renvoie "10" pour Win10 ET Win11 (noyau NT 10.0)
+      # Le build >= 22000 identifie Windows 11
+      raw   <- system(
+        'reg query "HKLM\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion" /v CurrentBuildNumber',
+        intern = TRUE, ignore.stderr = TRUE
+      )
+      line  <- raw[grepl("CurrentBuildNumber", raw, ignore.case = TRUE)]
+      build <- suppressWarnings(as.integer(trimws(gsub(".*\\s+", "", line[1]))))
+      if (!is.na(build) && build >= 22000L) "Windows 11" else "Windows 10"
+    } else if (os == "Darwin") {
+      ver <- trimws(system("sw_vers -productVersion", intern = TRUE)[1])
+      paste("macOS", ver)
+    } else {
+      if (file.exists("/etc/os-release")) {
+        lines  <- readLines("/etc/os-release")
+        pretty <- lines[grepl("^PRETTY_NAME=", lines)]
+        if (length(pretty) > 0L)
+          gsub('^PRETTY_NAME="|"$', "", pretty[1])
+        else
+          paste(Sys.info()["sysname"], Sys.info()["release"])
+      } else {
+        paste(Sys.info()["sysname"], Sys.info()["release"])
+      }
+    }
+  }, error = function(e) paste(Sys.info()["sysname"], Sys.info()["release"]))
+}
+
+cpu_name <- get_cpu_name()
+ram_go   <- get_ram_go()
+os_name  <- get_os_name()
+
+t_debut_str <- format(Sys.time(), "%d/%m/%Y %H:%M:%S")
+
+# ── Récupérer le KNITR_TOTAL de la compilation précédente AVANT d'écraser le fichier ──
+# C'est la correction clé : on lit la session précédente ici, et on stocke le total
+# dans une variable globale accessible par tbl-timers-v7 et tbl-bilan-phases.
+.prev_knitr_total <- tryCatch({
+  lignes_prev <- readLines("compilation_stats.txt")
+  ligne_kt    <- lignes_prev[grepl("^\\[KNITR_TOTAL\\]", lignes_prev)]
+  if (length(ligne_kt) > 0L) {
+    val <- suppressWarnings(
+      as.numeric(gsub("[^0-9.]", "", ligne_kt[length(ligne_kt)]))
+    )
+    if (length(val) == 1L && !is.na(val)) val else NA_real_
+  } else NA_real_
+}, error = function(e) NA_real_)
+assign(".prev_knitr_total", .prev_knitr_total, envir = .GlobalEnv)
+
+sysinfo <- data.frame(
+  Parametre = c("Plateforme", "OS", "Version R",
+                "Processeur", "Coeurs logiques",
+                "RAM totale (Go)", "Début phase knitr"),
+  Valeur = c(
+    .Platform$OS.type,
+    os_name,
+    R.version.string,
+    cpu_name,
+    parallel::detectCores(),
+    as.character(ram_go),
+    t_debut_str
+  )
+)
+
+write(
+  c("========================================",
+    "  RAPPORT DE COMPILATION — ESD113",
+    "========================================",
+    sprintf("%-20s %s", sysinfo$Parametre, sysinfo$Valeur),
+    sprintf("[KNITR_START] %s", t_debut_str),
+    "========================================",
+    "TEMPS PAR CHUNK :"),
+  file = "compilation_stats.txt"
+)
+
+# Hook timer — mesure chaque chunk individuellement
+knitr::knit_hooks$set(timer = function(before, options, envir) {
+  if (before) {
+    assign(".chunk_timer", proc.time(), envir = .GlobalEnv)
+  } else {
+    elapsed <- proc.time() - get(".chunk_timer", envir = .GlobalEnv)
+    write(
+      sprintf("[TIMER] %-35s : %.2f sec",
+              options$label, elapsed["elapsed"]),
+      file   = "compilation_stats.txt",
+      append = TRUE
+    )
+  }
+})
+
+knitr::opts_chunk$set(timer = TRUE)
+```
+
+
+
+
+
+
+
+
+
+\newpage
+
+# Remerciements {.unnumbered}
+
+\begin{retenirbox}
+Ce document est dédié à celles et ceux sans qui rien de tout cela n'aurait été possible.
+\end{retenirbox}
+
+À **Rhizlane**, mon épouse.
+
+Les soirées passées sur ces pages, les week-ends confisqués par les algorithmes et les compilations LaTeX récalcitrantes --- tu les as vécus avec une patience et une générosité qui forcent l'admiration. Tu as tenu la maison, organisé les journées, rassuré les enfants qui demandaient où était papa, et tu l'as fait avec cette force tranquille qui te caractérise. Ce travail t'appartient autant qu'à moi. Merci d'avoir cru, sans jamais fléchir, que ces efforts en valaient la peine.
+
+À **mes deux enfants**,
+
+Vous avez souvent dû vous passer de moi à des moments où un père devrait être présent --- les jeux du soir, les histoires du coucher, les repas en famille que l'écran a parfois remplacés. Vous avez accepté ces absences avec une maturité touchante, et chacun de vos sourires, chacune de vos questions sur "ce que fait papa sur l'ordinateur", m'a redonné l'énergie de continuer. Je vous dois du temps, de la présence, et je m'y engage. Ce document, c'est aussi votre victoire.
+
+À **Monsieur Karim Kiliani**, responsable de l'unité d'enseignement ESD113,
+
+Rares sont les enseignants qui parviennent à rendre la statistique non seulement accessible, mais véritablement désirable. Votre pédagogie rigoureuse, votre disponibilité et votre souci constant de contextualiser les méthodes dans des cas concrets ont transformé ce cours en une exploration intellectuelle passionnante. Merci de consacrer votre expertise à des auditeurs comme moi, qui jonglent entre vie professionnelle et ambition académique.
+
+Au **CNAM**,
+
+Permettre à un auditeur d'une cinquantaine d'années, au cœur d'une vie active intense, de se former aux méthodes quantitatives avancées, à la data science, à R et à Quarto --- c'est un acte de foi dans l'idée que l'éducation n'a pas d'âge et que l'apprentissage tout au long de la vie n'est pas un slogan mais une réalité concrète. Le CNAM incarne cette conviction avec une constance exemplaire depuis plus de deux siècles. Il est difficile d'exprimer combien ce dispositif représente, pour des professionnels comme moi, une chance inestimable de rester dans la course d'un monde qui accélère. Merci d'exister, merci de persévérer, merci d'accueillir ceux que les circuits classiques ne peuvent plus atteindre.
+
+\vspace{1em}
+
+\begin{flushright}
+\textit{Alban VIDELOUP} \\
+\textit{Paris, \today}
+\end{flushright}
+
+\newpage
+
+# Introduction générale {#sec-intro-generale}
+
+Ce document a été réalisé dans le cadre de l'unité d'enseignement **ESD113 --- Probabilités et statistiques avec R**, dispensée au Conservatoire National des Arts et Métiers (CNAM) par Monsieur Karim Kiliani.
+
+Un recours significatif aux outils d'intelligence artificielle a permis de résoudre les problématiques complexes de mise en page \LaTeX{} avec précision et rapidité, tout en facilitant la structuration du contenu.
+
+Ce document fusionne trois volets complémentaires du cours :
+
+\begin{enumerate}
+  \item \textbf{Volet 1 --- Introduction à R, Quarto et Tidyverse :} prise en main de l'environnement de travail, manipulation de données, visualisation.
+  \item \textbf{Volet 2 --- Projet Keno :} application à un cas concret avec les données de tirage du Keno (FDJ), incluant modélisation probabiliste et simulation de Monte-Carlo.
+  \item \textbf{Volet 3 --- Méthodes de clustering :} reproduction et adaptation du code R de l'article de référence \textit{"A Survey of Popular R Packages for Cluster Analysis"} (Flynt \& Dean, 2016), couvrant K-means, classification hiérarchique ascendante et modèles de mélanges gaussiens (Mclust).
+\end{enumerate}
+
+Le fil conducteur est la \textbf{rigueur reproductible} : chaque résultat est produit directement par le code R présenté, dans un document Quarto compilable du premier coup.
+
+\begin{retenirbox}
+\textbf{Note sur le choix rédactionnel :} Ce document fait délibérément appel à \LaTeX{} pour la majorité de ses éléments de mise en forme --- boîtes pédagogiques, formules mathématiques, tableaux, en-têtes et pieds de page. Ce choix n'est pas anodin : si Quarto supporte nativement la syntaxe Markdown, la version pure Markdown produit un rendu PDF sensiblement plus générique et moins soigné. \LaTeX{} offre un contrôle typographique de précision --- gestion fine des espacements, des polices, des couleurs, des flottants et des environnements --- qui confère au document le niveau de finition attendu d'un travail académique. Le couple Quarto + \LaTeX{} constitue ainsi le meilleur des deux mondes : la lisibilité du Markdown pour le texte courant et le code R, la puissance de \LaTeX{} pour la présentation.
+\end{retenirbox}
+
+Toutes les analyses sont réalisées avec R [@r2024] et Quarto [@quarto2024].
+
+\newpage
+
+# Partie I --- Introduction à R, Quarto et Tidyverse {.unnumbered}
+
+\addcontentsline{toc}{part}{Partie I --- Introduction à R, Quarto et Tidyverse}
+
+\newpage
+
+# Initiation à R, Quarto et Markdown {#sec-intro}
+
+## Présentation générale
+
+Ce document est une introduction pratique au langage \textbf{R} et à l'environnement de publication \textbf{Quarto}. L'objectif est triple :
+
+\begin{enumerate}
+  \item \textbf{Découvrir Quarto} : un système de publication scientifique qui mêle texte, code et résultats dans un seul document.
+  \item \textbf{Maîtriser les bases de R et du Tidyverse} : manipulation de données, statistiques descriptives, visualisation.
+  \item \textbf{Appliquer ces outils à un cas réel} : les données de tirage du \textbf{Keno FDJ}, avec modélisation probabiliste et simulation de Monte-Carlo.
+\end{enumerate}
+
+\begin{analogiebox}
+Quarto, c'est comme un cahier de laboratoire numérique : on y écrit ses observations (le texte), on y insère ses protocoles (le code R), et les résultats apparaissent automatiquement à la compilation. Plus besoin de copier-coller les sorties manuellement.
+\end{analogiebox}
+
+## Mise en forme du texte en Markdown
+
+Quarto repose sur la syntaxe \textbf{Markdown} pour la mise en forme. On peut écrire en \textbf{gras} et en \textit{italique}, insérer des listes, des tableaux et des formules mathématiques grâce à \LaTeX{}.
+
+### Exemples de formules mathématiques
+
+Pour chaque formule, le bloc grisé ci-dessous montre le **code LaTeX source** tel qu'il apparaît dans le document `.qmd`, et le rendu est affiché juste en dessous. Cette double présentation est précieuse pour l'apprentissage : on voit à la fois ce qu'on écrit et ce que le moteur typographique produit.
+
+\textbf{L'intégrale de Gauss} --- résultat fondamental en probabilité et théorie des fonctions, qui établit que l'aire sous la courbe en cloche $e^{-x^2}$ vaut exactement $\sqrt{\pi}$ :
+
+```latex
+$$\int_{-\infty}^{+\infty} e^{-x^2}\, dx = \sqrt{\pi}$$
+```
+
+$$\int_{-\infty}^{+\infty} e^{-x^2}\, dx = \sqrt{\pi}$$
+
+où $x \in \mathbb{R}$ est la variable d'intégration et $e^{-x^2}$ est la fonction gaussienne non normalisée. C'est cette identité qui fonde, après normalisation par $\sqrt{2\pi}\sigma$, la densité de la loi normale.
+
+\textbf{La Transformée de Fourier (décomposition)} --- extrait les fréquences d'un signal temporel pour révéler son contenu spectral :
+
+```latex
+$$\hat{f}(\xi) = \int_{-\infty}^{+\infty} f(t)\, e^{-i 2\pi \xi t}\, dt$$
+```
+
+$$\hat{f}(\xi) = \int_{-\infty}^{+\infty} f(t)\, e^{-i 2\pi \xi t}\, dt$$
+
+où $f(t)$ est le signal d'origine (fonction du temps $t$), $\hat{f}(\xi)$ est sa transformée (fonction de la fréquence $\xi$), et $e^{-i 2\pi \xi t}$ est le noyau exponentiel complexe qui projette le signal sur chaque fréquence. La constante $i$ désigne l'unité imaginaire ($i^2 = -1$).
+
+\textbf{La Transformée de Fourier inverse (reconstruction)} --- opération réciproque qui reconstruit le signal temporel à partir de son spectre :
+
+```latex
+$$f(t) = \int_{-\infty}^{+\infty} \hat{f}(\xi)\, e^{i 2\pi \xi t}\, d\xi$$
+```
+
+$$f(t) = \int_{-\infty}^{+\infty} \hat{f}(\xi)\, e^{i 2\pi \xi t}\, d\xi$$
+
+où les rôles de $t$ et $\xi$ sont inversés par rapport à la transformée directe : on intègre maintenant sur la variable de fréquence $\xi$, et le signe du noyau exponentiel passe de $-i$ à $+i$ (ce qui assure la réversibilité de l'opération).
+
+## Les chunks de code R
+
+Un \textbf{chunk} est un bloc de code exécutable intégré au document. Le chunk ci-dessous génère la séquence des entiers de 1 à 20 :
+
+```{r seq-entiers}
+#| label: seq-entiers
+
+seq(1, 20)   # Séquence de 1 à 20 par pas de 1
+1:20         # Notation compacte équivalente
+```
+
+Les années de Coupe du Monde de football (de 1970 à 2026) :
+
+```{r seq-cdm}
+#| label: seq-cdm
+
+seq(1970, 2026, by = 4)
+```
+
+\begin{retenirbox}
+La fonction \texttt{seq(de, à, by = pas)} est l'une des plus utiles de R. On peut aussi écrire \texttt{1:20} pour une séquence d'entiers consécutifs --- c'est la notation compacte équivalente à \texttt{seq(1, 20, by = 1)}.
+\end{retenirbox}
+
+## Références bibliographiques dans Quarto
+
+Quarto gère nativement les bibliographies via \textbf{BibTeX}. Il suffit d'indiquer le fichier \texttt{.bib} dans l'en-tête YAML et de citer avec \texttt{@cle\_bib}. Par exemple, on peut citer l'article fondateur du Tidyverse : @wickham2019.
+
+\newpage
+
+# Le Tidyverse {#sec-tidyverse}
+
+## Présentation
+
+Le \textbf{Tidyverse} est un écosystème de packages R conçu pour la \textit{data science}. Tous ces packages partagent une même philosophie, une même grammaire et des structures de données communes (les \textit{tibbles}).
+
+\begin{analogiebox}
+Le Tidyverse, c'est comme une boîte à outils bien organisée : chaque outil a un rôle précis, ils fonctionnent tous ensemble, et on apprend une fois la logique commune plutôt que de mémoriser des syntaxes disparates.
+\end{analogiebox}
+
+Parmi les packages les plus utilisés : \texttt{dplyr} (manipulation), \texttt{ggplot2} (visualisation), \texttt{tidyr} (restructuration), \texttt{readr} (importation), \texttt{lubridate} (dates) et \texttt{stringr} (chaînes de caractères).
+
+## Manipulation d'un data frame en R de base
+
+Illustrons la manipulation de données avec \textbf{R de base} sur le jeu de données intégré \texttt{mtcars} (32 modèles d'automobiles) :
+
+```{r base-r}
+#| label: base-r
+
+dfcars <- mtcars
+
+dfcars$mpg          # Affiche les 32 valeurs de mpg (miles par gallon)
+
+dfcars[, 1]         # Sélection de la 1ère colonne (toutes les lignes)
+
+dfcars[1, ]         # Sélection de la 1ère ligne (toutes les colonnes)
+
+dfcars[1, 1]        # Valeur unique : 1ère colonne, 1ère ligne
+```
+
+## Manipulations avec le Tidyverse et le pipe `|>`
+
+Le \textbf{pipe natif} \texttt{|>} (disponible depuis R 4.1) permet de chaîner les opérations de gauche à droite :
+
+```{r tidyverse-select}
+#| label: tidyverse-select
+
+dfcars |> dplyr::select(mpg)       # Sélection par nom
+
+dfcars |> dplyr::select(7:11)      # Sélection d'une plage de colonnes
+```
+
+## Statistiques descriptives
+
+La fonction \texttt{summarise()} calcule des statistiques agrégées :
+
+```{r tbl-stats-desc}
+#| label: tbl-stats-desc
+#| tbl-cap: "Statistiques descriptives de la variable mpg (mtcars)"
+
+stat_des <- dfcars |>
+  select(mpg) |>
+  summarise(
+    Moyenne      = mean(mpg),
+    `Ecart-type` = sd(mpg),
+    Minimum      = min(mpg),
+    Maximum      = max(mpg)
+  )
+
+stat_des |>
+  kable(
+    digits   = 2,
+    booktabs = TRUE
+  ) |>
+  kable_styling(latex_options = c("hold_position", "striped"), font_size = 10)
+```
+
+\newpage
+
+# Introduction à la visualisation avec R {#sec-visu}
+
+## Histogramme de base
+
+```{r hist-base}
+#| label: hist-base
+#| fig.cap: "Histogramme de la consommation des 32 véhicules (R de base)"
+
+dfcars$mpg |> hist(
+  main   = "Histogramme de MPG",
+  xlab   = "Miles par gallon",
+  col    = "steelblue",
+  border = "white"
+)
+```
+
+Filtrons les voitures les plus économiques :
+
+```{r filter-mpg}
+#| label: filter-mpg
+
+dfcars |> filter(mpg >= 30 & mpg <= 35)
+```
+
+## Histogramme avec ggplot2
+
+```{r ggplot-hist}
+#| label: ggplot-hist
+#| fig.cap: "Distribution de la consommation (ggplot2)"
+
+dfcars |>
+  ggplot(aes(x = mpg)) +
+  geom_histogram(fill = "#a12b4e", binwidth = 5, color = "white") +
+  labs(
+    title    = "Distribution de la consommation des 32 véhicules",
+    subtitle = "Données : jeu intégré mtcars",
+    x        = "Miles par gallon (mpg)",
+    y        = "Nombre de véhicules"
+  )
+```
+
+\begin{attentionbox}
+La bibliothèque \texttt{ggthemes} (utilisée dans la version HTML) n'est pas indispensable pour la version PDF. Le thème \texttt{theme\_minimal()} est tout à fait adapté aux sorties imprimées.
+\end{attentionbox}
+
+\newpage
+
+# Partie II --- Projet Keno : analyse des données FDJ {.unnumbered}
+
+\addcontentsline{toc}{part}{Partie II --- Projet Keno : analyse des données FDJ}
+
+\newpage
+
+# Projet Keno --- Analyse des données FDJ {#sec-keno}
+
+## Présentation du Keno
+
+Le \textbf{Keno} est un jeu de tirage proposé par la Française des Jeux (FDJ). À chaque tirage, \textbf{16 boules} sont tirées aléatoirement parmi \textbf{56}, numérotées de 1 à 56. Le joueur coche jusqu'à 10 numéros sur sa grille, et ses gains dépendent du nombre de numéros cochés figurant parmi les 16 boules tirées. Toutes les analyses de ce document portent sur cette version : \textbf{16 boules parmi 56}.
+
+## Chargement des données
+
+```{r load-data}
+#| label: load-data
+
+keno_202511 <- read_delim(
+  "keno_202511.csv",
+  delim         = ";",
+  escape_double = FALSE,
+  col_types     = cols(
+    date_de_forclusion = col_skip(),
+    ...23              = col_skip()
+  ),
+  trim_ws       = TRUE
+)
+
+keno_202511 <- keno_202511 |> select(-c(1, 19, 20, 21))
+
+names(keno_202511)
+```
+
+## Pivot longer : restructuration des données
+
+### Le concept de pivot
+
+Les données Keno arrivent au format \textbf{large} : 1 ligne par tirage, 16 colonnes \texttt{boule1} à \texttt{boule16}. Pour les analyses, on préfère le format \textbf{long} : 1 ligne par boule, avec une colonne numéro.
+
+Exemple illustratif avec des données sur les cas de maladie :
+
+```{r pivot-exemple}
+#| label: pivot-exemple
+
+table4a <- tibble(
+  country = c("A", "B", "C"),
+  `1999`  = c(700,  37000,  212000),
+  `2000`  = c(2000, 80000,  213000)
+)
+
+table4a |>
+  pivot_longer(
+    cols      = 2:3,
+    names_to  = "annee",
+    values_to = "cas"
+  )
+```
+
+### Application au Keno
+
+```{r pivot-keno}
+#| label: pivot-keno
+
+keno_longer <- keno_202511 |>
+  pivot_longer(
+    cols         = 2:17,
+    names_to     = "Boule",
+    names_prefix = "boule",
+    values_to    = "Num_boule"
+  ) |>
+  mutate(
+    Boule     = as.integer(Boule),
+    Num_boule = as.integer(Num_boule)
+  )
+
+glimpse(keno_longer)
+```
+
+## Tableau de fréquence des boules
+
+```{r freq-boules}
+#| label: freq-boules
+
+freq_boules <- keno_longer |>
+  dplyr::count(Num_boule, name = "frequence")
+
+freq_boules |> filter(frequence == min(frequence))
+```
+
+## Formatage des dates
+
+```{r format-dates}
+#| label: format-dates
+
+keno_202511 <- keno_202511 |>
+  mutate(date_de_tirage = as.Date(date_de_tirage, format = "%d/%m/%Y"))
+
+keno_202511 |>
+  summarise(
+    date_min = format(min(date_de_tirage), "%d/%m/%Y"),
+    date_max = format(max(date_de_tirage), "%d/%m/%Y")
+  )
+```
+
+## Palmarès des numéros --- Tableau statistique {#sec-palmares}
+
+Ce tableau s'inspire du \textbf{palmarès des numéros} du site FDJ. Pour chaque numéro de 1 à 56, on affiche le nombre de sorties, le pourcentage de présence et la date de dernière sortie. La boîte ci-dessous précise la formule de calcul utilisée et fournit la référence théorique permettant d'interpréter correctement les valeurs affichées.
+
+\begin{theorbox}
+\textbf{Calcul du pourcentage de présence.} Pour chaque numéro $i \in \{1, \ldots, 56\}$, on note $S_i$ le nombre de tirages dans lesquels il est sorti. Avec $N$ tirages historiques disponibles, le pourcentage de présence du numéro $i$ est défini par :
+
+\vspace{-0.4em}
+\[
+  \mathrm{Pct}_i \;=\; \dfrac{S_i}{N} \times 100
+\]
+\vspace{-0.6em}
+
+où $S_i$ est le nombre de sorties du numéro $i$ et $N$ le nombre total de tirages. Cette formule est strictement \textbf{identique au calcul officiel publié par la FDJ} sur sa page de statistiques Keno.
+
+\medskip
+
+\textbf{Référence théorique.} À chaque tirage, 16 boules sont tirées parmi 56. La probabilité qu'un numéro donné figure dans un tirage est donc :
+
+\vspace{-0.4em}
+\[
+  p_{\text{théo}} \;=\; \dfrac{16}{56} \;\approx\; 0{,}2857 \;=\; \mathbf{28{,}57\,\%}
+\]
+\vspace{-0.6em}
+
+\textbf{Lecture du tableau.} Un numéro affichant un pourcentage proche de \textbf{28,57\,\%} est conforme à la loi théorique. Un écart vers le haut indique un numéro \textit{sur-représenté} sur la période, vers le bas un numéro \textit{sous-représenté}. Avec seulement $N = 100$ tirages, ces écarts sont attendus et relèvent de la fluctuation d'échantillonnage --- ils n'ont aucune valeur prédictive pour les tirages futurs.
+\end{theorbox}
+
+```{r tbl-palmares-pdf}
+#| label: tbl-palmares-pdf
+#| tbl-cap: "Palmarès des numéros du Keno FDJ --- inspiré du design officiel FDJ."
+#| echo: false
+#| output: asis
+
+## keno_202511 déjà chargé et date_de_tirage converti en Date
+total_t <- nrow(keno_202511)
+
+stat_p <- keno_202511 |>
+  pivot_longer(
+    cols      = matches("^boule[0-9]+$"),
+    names_to  = "position",
+    values_to = "num"
+  ) |>
+  mutate(num = as.integer(num)) |>
+  group_by(num) |>
+  summarise(
+    sorties  = n(),
+    pct      = round(n() / total_t * 100, 2),
+    derniere = format(max(date_de_tirage, na.rm = TRUE), "%d/%m/%y"),
+    .groups  = "drop"
+  ) |>
+  arrange(num)
+
+m1 <- stat_p |> filter(num <= 28)
+m2 <- stat_p |> filter(num >= 29)
+
+fmt_n <- function(n) {
+  sprintf("\\textbf{%d}\\,\\textcolor{rougefdj}{\\textbullet}", n)
+}
+
+lignes <- vapply(seq_len(nrow(m1)), function(i) {
+  ombrage <- if (i %% 2 == 1) "\\rowcolor{gray!7}" else ""
+  sprintf(
+    "%s %s & %d & %.2f\\%% & %s & %s & %d & %.2f\\%% & %s \\\\",
+    ombrage,
+    fmt_n(m1$num[i]), m1$sorties[i], m1$pct[i], m1$derniere[i],
+    fmt_n(m2$num[i]), m2$sorties[i], m2$pct[i], m2$derniere[i]
+  )
+}, character(1L))
+
+## Quarto ajoute \begin{table}...\end{table} et \caption{} automatiquement.
+## On fournit uniquement le contenu tabulaire.
+cat("\\setlength{\\aboverulesep}{0pt}\\setlength{\\belowrulesep}{0pt}\n")
+cat("\\setlength{\\tabcolsep}{4pt}\\small\n")
+cat("\\begin{tabular}{@{}lrrl@{\\hspace{8pt}}lrrl@{}}\n")
+cat("\\toprule\n")
+cat("\\multicolumn{4}{c}{\\textbf{Num\\'eros 1 \\`a 28}} & \\multicolumn{4}{c}{\\textbf{Num\\'eros 29 \\`a 56}} \\\\\n")
+cat("\\cmidrule(r){1-4}\\cmidrule(l){5-8}\n")
+cat("\\textbf{Num\\'ero} & \\textbf{Sorties} & \\textbf{\\%} & \\textbf{Derni\\`ere} & ")
+cat("\\textbf{Num\\'ero} & \\textbf{Sorties} & \\textbf{\\%} & \\textbf{Derni\\`ere} \\\\\n")
+cat("\\midrule\n")
+cat(paste(lignes, collapse = "\n"), "\n")
+cat("\\bottomrule\n")
+cat("\\end{tabular}\n")
+```
+
+## Statistiques sur le format long
+
+```{r tbl-keno-long}
+#| label: tbl-keno-long
+#| tbl-cap: "Fréquence d'apparition des numéros (Keno --- données FDJ)"
+
+keno_long <- keno_202511 |>
+  pivot_longer(
+    cols            = boule1:boule16,
+    names_to        = "boule",
+    names_prefix    = "boule",
+    names_transform = list(boule = as.integer),
+    values_to       = "numero"
+  )
+
+table_freq <- keno_long |>
+  dplyr::count(numero, name = "Nombre de sorties") |>
+  complete(numero = 1:56, fill = list(`Nombre de sorties` = 0)) |>
+  arrange(numero)
+
+n_half <- ceiling(nrow(table_freq) / 2)
+col1   <- table_freq[1:n_half, ]
+col2   <- table_freq[(n_half + 1):nrow(table_freq), ]
+
+bind_cols(col1, col2) |>
+  setNames(c("Numéro", "Sorties", "Numéro", "Sorties")) |>
+  kable(
+    booktabs = TRUE,
+    linesep  = "",
+    align    = c("c","c","c","c")
+  ) |>
+  kable_styling(
+    latex_options = c("hold_position", "striped", "scale_down"),
+    font_size     = 9
+  ) |>
+  column_spec(2, border_right = TRUE) |>
+  add_header_above(c("Numéros 1 à 28" = 2, "Numéros 29 à 56" = 2), bold = TRUE)
+```
+
+\newpage
+
+# Visualisations graphiques du Keno {#sec-graphiques}
+
+## Histogramme des fréquences
+
+```{r barchart-freq}
+#| label: barchart-freq
+#| fig.cap: "Fréquence d'apparition de chaque numéro du Keno (1 à 56)"
+
+freq_boules_plot <- keno_long |>
+  dplyr::count(numero, name = "frequence") |>
+  complete(numero = 1:56, fill = list(frequence = 0)) |>
+  arrange(numero)
+
+freq_boules_plot |>
+  ggplot(aes(x = numero, y = frequence, fill = frequence)) +
+  geom_bar(stat = "identity", color = "white", width = 0.8) +
+  scale_fill_gradient(low = "green", high = "blue") +
+  labs(
+    title    = "Fréquence d'apparition de chaque numéro du Keno",
+    subtitle = "Données FDJ — tirages du midi et du soir",
+    x        = "Numéro de boule (1 à 56)",
+    y        = "Nombre de sorties",
+    fill     = "Fréquence"
+  ) +
+  theme(legend.position = "right")
+```
+
+## Graphique circulaire (diagramme en rose)
+
+```{r polar-chart}
+#| label: polar-chart
+#| fig.cap: "Répartition circulaire des fréquences du Keno"
+#| fig.height: 7
+#| fig.width: 7
+#| out.width: "82%"
+
+freq_boules_plot |>
+  ggplot(aes(
+    x    = reorder(as.factor(numero), as.numeric(numero)),
+    y    = frequence,
+    fill = frequence
+  )) +
+  geom_bar(stat = "identity", show.legend = FALSE, color = "white", width = 1) +
+  coord_polar(theta = "x", clip = "off") +
+  geom_text(
+    aes(y = frequence + 2, label = numero),
+    color    = "black",
+    size     = 2.8,
+    fontface = "bold"
+  ) +
+  scale_fill_gradient(low = "green", high = "blue") +
+  scale_y_continuous(
+    limits = c(-4, max(freq_boules_plot$frequence) + 4),
+    expand = expansion(mult = c(0, 0))
+  ) +
+  labs(
+    title    = "Répartition circulaire des fréquences",
+    subtitle = "Chaque secteur représente un numéro (1 à 56)"
+  ) +
+  theme_void() +
+  theme(
+    plot.margin   = margin(t = 40, r = -50, b = -30, l = -50, unit = "pt"),
+    plot.title    = element_text(face = "bold", hjust = 0.5, size = 14),
+    plot.subtitle = element_text(hjust = 0.5, color = "grey40", size = 10,
+                                 margin = margin(b = 10)),
+    aspect.ratio  = 1
+  )
+```
+
+\newpage
+
+# Modélisation probabiliste du Keno {#sec-proba}
+
+## La loi hypergéométrique
+
+\begin{SaveVerbatim}{VerbHyperFormula}
+$$P(X = x) = \frac{\binom{K}{x}\binom{N-K}{n-x}}{\binom{N}{n}}$$
+\end{SaveVerbatim}
+
+\begin{theorbox}
+Le Keno est un tirage \textbf{sans remise} : les boules ne sont pas replacées. La distribution de probabilité adaptée est la \textbf{loi hypergéométrique} :
+
+\smallskip\noindent
+\colorbox{gray!10}{\parbox{\dimexpr\linewidth-2\fboxsep\relax}{%
+  \setlength{\parindent}{0pt}%
+  \UseVerbatim[fontsize=\small]{VerbHyperFormula}%
+}}
+\smallskip
+
+$$P(X = x) = \frac{\binom{K}{x}\binom{N-K}{n-x}}{\binom{N}{n}}$$
+
+\noindent avec : $N = 56$ (taille de l'urne), $K = 16$ (boules tirées par le Keno), $n = 10$ (numéros cochés par le joueur), $x$ (nombre de bons numéros).
+\end{theorbox}
+
+La fonction R correspondante est \texttt{dhyper(x, m, n, k)}.
+
+## Calcul des probabilités de gain
+
+```{r tbl-proba-gain}
+#| label: tbl-proba-gain
+#| tbl-cap: "Probabilités hypergéométriques --- Keno (10 numéros cochés, 16 tirés sur 56)"
+tibble(
+  x      = 0:10,
+  p_x    = dhyper(0:10, m = 16, n = 40, k = 10),
+  chance = round(1 / p_x)
+) |>
+  arrange(desc(x)) |>
+  kable(
+    digits    = 6,
+    booktabs  = TRUE,
+    col.names = c("x (bonnes boules)", "p(x)", "1 chance sur...")
+  ) |>
+  kable_styling(
+    latex_options = c("hold_position", "striped"),
+    font_size     = 10
+  )
+```
+
+## Tableau des gains officiels FDJ
+
+```{r tbl-tableau-gains}
+#| label: tbl-tableau-gains
+#| tbl-cap: "Gains officiels FDJ et probabilités (mise de 1 euro, 10 numéros cochés)"
+
+tableau_gains <- tibble(
+  x      = 0:10,
+  `p(x)` = dhyper(x, m = 16, n = 40, k = 10)
+) |>
+  arrange(desc(x)) |>
+  filter(!x %in% 1:4) |>
+  mutate(
+    `g(x) (en euros)` = c(200000, 2000, 150, 15, 5, 2, 2),
+    .after             = x
+  )
+
+tableau_gains |>
+  kable(
+    digits    = 6,
+    booktabs  = TRUE,
+    col.names = c("Bonnes boules (x)", "Gain g(x) (en euros)", "Probabilité p(x)")
+  ) |>
+  kable_styling(
+    latex_options = c("hold_position", "striped"),
+    font_size     = 10
+  )
+```
+
+\newpage
+
+# Référence officielle FDJ : tableau complet des gains {#sec-fdj-ref}
+
+## Les tableaux de gains officiels
+
+::: {.callout-note appearance="minimal"}
+Les probabilités et gains présentés dans cette section sont calculés à partir des règles officielles
+du Keno FDJ. Les sources officielles sont consultables en ligne :
+
+- **Probabilités et chances de gagner** :
+  [fdj.fr — Quelles sont les chances de gagner au Kéno ?](https://www.fdj.fr/mag/questions/article-quelles-les-chances-de-gagner-keno-190326)
+- **Statistiques officielles des tirages** :
+  [fdj.fr — Kéno Statistiques](https://www.fdj.fr/jeux-de-tirage/keno/statistiques)
+:::
+
+Le tableau ci-dessous reproduit le tableau officiel FDJ des lots du Keno, tel que publié dans
+le règlement de la Française des Jeux (article 8). Il couvre les grilles de 4 à 10 numéros cochés
+et précise, pour chaque combinaison, les probabilités de gain et les montants des lots pour une
+mise de 1\,\euro{}.
+
+::: {.content-visible when-format="pdf"}
+```{=latex}
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.82\linewidth, page=1]{tableau-gain-keno-2025.pdf}
+  \caption{Tableau officiel FDJ des lots du Keno --- article~8 du règlement FDJ (mise de 1\,\euro{}).
+           Source : Française des Jeux.}
+\end{figure}
+```
+:::
+
+::: {.content-visible when-format="html"}
+> **Tableau officiel FDJ des lots du Keno** — voir le fichier PDF joint : `tableau-gain-keno-2025.pdf`
+:::
+
+\newpage
+
+## Construction de la table complète des gains FDJ {#sec-gains-complet}
+
+Nous reproduisons ici le tableau des gains pour **toutes les grilles** (de 2 à 10 numéros
+cochés), en calculant les probabilités théoriques avec `dhyper()` et en renseignant les gains
+officiels conformément au règlement FDJ (mise de 1 €). Toutes les probabilités sont calculées
+dans le modèle **16 boules tirées sur 56**, qui est le modèle correspondant aux données
+historiques disponibles dans `keno_202511.csv`.
+
+```{r gains-data}
+#| label: gains-data
+
+# -----------------------------------------------------------------------
+# Paramètres du Keno FDJ — modèle utilisé dans les données historiques
+# disponibles : 16 boules tirées sur 56 (keno_202511.csv)
+# -----------------------------------------------------------------------
+N_keno <- 56   # taille de l'urne
+K_keno <- 16   # boules tirées par tirage
+
+# -----------------------------------------------------------------------
+# Table des gains officiels FDJ (mise 1 €) — source : article 8 du
+# règlement FDJ (tableau-gain-keno-2025.pdf), modèle 16/56.
+# Format : list(n_coches = list(n_trouves = gain_en_euros))
+# Seules les combinaisons donnant lieu à un gain figurent ici.
+# -----------------------------------------------------------------------
+gains_fdj <- list(
+  `10` = list(`10` = 200000, `9` = 2000,  `8` = 150, `7` = 15,
+              `6`  = 5,      `5` = 2,     `0` = 2),
+  `9`  = list(`9`  = 30000,  `8` = 100,   `7` = 25,  `6` = 8,
+              `5`  = 2,      `4` = 1,     `0` = 2),
+  `8`  = list(`8`  = 8000,   `7` = 100,   `6` = 30,  `5` = 5,  `0` = 2),
+  `7`  = list(`7`  = 3000,   `6` = 90,    `5` = 5,   `4` = 2),
+  `6`  = list(`6`  = 900,    `5` = 30,    `4` = 3),
+  `5`  = list(`5`  = 80,     `4` = 10,    `3` = 2),
+  `4`  = list(`4`  = 70,     `3` = 3),
+  `3`  = list(`3`  = 10,     `2` = 2),
+  `2`  = list(`2`  = 6)
+)
+
+message("Table des gains FDJ chargée : ", length(gains_fdj), " grilles définies (2 à 10 numéros).")
+```
+
+```{r gains-calcul-long}
+#| label: gains-calcul-long
+#| dependson: "gains-data"
+
+# -----------------------------------------------------------------------
+# Construction du tableau long : une ligne par combinaison (n_cochés, n_trouvés)
+# avec probabilité théorique (dhyper) et gain officiel FDJ
+# -----------------------------------------------------------------------
+df_gains_long <- purrr::imap_dfr(gains_fdj, function(gains_grille, n_coches_chr) {
+  n <- as.integer(n_coches_chr)
+  purrr::imap_dfr(gains_grille, function(gain, n_trouves_chr) {
+    x <- as.integer(n_trouves_chr)
+    p <- dhyper(x, m = K_keno, n = N_keno - K_keno, k = n)
+    tibble(
+      n_coches   = n,
+      n_trouves  = x,
+      prob       = p,
+      chance     = if (p > 0) round(1 / p) else NA_real_,
+      gain_1eur  = gain,
+      gain_10eur = gain * 10
+    )
+  })
+}) |>
+  arrange(desc(n_coches), desc(n_trouves))
+
+message("Tableau long construit : ", nrow(df_gains_long), " lignes.")
+```
+
+```{r tbl-gains-tableau-10}
+#| label: tbl-gains-tableau-10
+#| tbl-cap: "Grille à 10 numéros cochés --- probabilités et gains officiels FDJ (16 boules sur 56, mise 1 euro)"
+#| dependson: "gains-calcul-long"
+
+# -----------------------------------------------------------------------
+# Affichage détaillé : grille à 10 numéros cochés (la plus complète)
+# -----------------------------------------------------------------------
+df_gains_long |>
+  filter(n_coches == 10) |>
+  select(
+    `N° trouvés`      = n_trouves,
+    `Probabilité`           = prob,
+    `1 chance sur...`   = chance,
+    `Gain (1 €)`  = gain_1eur,
+    `Gain (10 €)` = gain_10eur
+  ) |>
+  kable(
+    digits      = 7,
+    booktabs    = TRUE,
+    format.args = list(big.mark = " ")
+  ) |>
+  kable_styling(
+    latex_options     = c("hold_position", "striped"),
+    bootstrap_options = c("striped", "hover", "condensed"),
+    font_size         = 10,
+    full_width        = FALSE
+  ) |>
+  row_spec(1, bold = TRUE, color = "white", background = "#a12b4e") |>
+  column_spec(4, bold = TRUE)
+```
+
+```{r tbl-gains-tableau-complet}
+#| label: tbl-gains-tableau-complet
+#| tbl-cap: "Table complète des gains FDJ --- toutes grilles de 2 à 10 numéros cochés (16 boules tirées sur 56, mise 1 euro)"
+#| dependson: "gains-calcul-long"
+
+# -----------------------------------------------------------------------
+# Tableau synthétique toutes grilles — mise en forme publication
+# Les indices de groupe sont calculés dynamiquement pour rester robustes.
+# -----------------------------------------------------------------------
+groupes <- df_gains_long |>
+  mutate(row_id = row_number()) |>
+  group_by(n_coches) |>
+  summarise(debut = min(row_id), fin = max(row_id), .groups = "drop") |>
+  arrange(desc(n_coches))
+
+tbl_complet <- df_gains_long |>
+  mutate(
+    prob_fmt   = formatC(prob,   format = "e", digits = 3),
+    chance_fmt = formatC(chance, format = "fg", big.mark = " ",
+                         flag = "#") |> stringr::str_trim(),
+    gain_fmt   = paste0(formatC(gain_1eur, format = "fg",
+                                big.mark = " "), " €")
+  ) |>
+  select(
+    `Grille`       = n_coches,
+    `N° trouvés` = n_trouves,
+    `p(x)`         = prob_fmt,
+    `1 chance sur` = chance_fmt,
+    `Gain (1 €)` = gain_fmt
+  )
+
+tbl_obj <- tbl_complet |>
+  kable(
+    booktabs = TRUE,
+    align    = c("c","c","r","r","r"),
+    linesep  = ""
+  ) |>
+  kable_styling(
+    latex_options     = c("hold_position", "striped", "scale_down"),
+    bootstrap_options = c("striped", "hover", "condensed"),
+    font_size         = 9,
+    full_width        = FALSE
+  )
+
+for (i in seq_len(nrow(groupes))) {
+  tbl_obj <- tbl_obj |>
+    pack_rows(
+      paste0(groupes$n_coches[i], " numéros cochés"),
+      groupes$debut[i],
+      groupes$fin[i]
+    )
+}
+
+tbl_obj
+```
+
+\newpage
+
+## Espérances de gain par grille {#sec-esperances-grilles}
+
+\begin{SaveVerbatim}{VerbEsperanceGrille}
+$$E_n[G] = \sum_{x \in \mathcal{G}_n} g(x) \cdot p(x)$$
+\end{SaveVerbatim}
+
+\begin{theorbox}
+Pour chaque grille (nombre de numéros cochés $n$), l'espérance de gain se calcule en
+sommant les gains pondérés par leurs probabilités, sur toutes les combinaisons gagnantes :
+
+\smallskip\noindent
+\colorbox{gray!10}{\parbox{\dimexpr\linewidth-2\fboxsep\relax}{%
+  \setlength{\parindent}{0pt}%
+  \UseVerbatim[fontsize=\small]{VerbEsperanceGrille}%
+}}
+\smallskip
+
+$$E_n[G] = \sum_{x \in \mathcal{G}_n} g(x) \cdot p(x)$$
+
+où $\mathcal{G}_n$ est l'ensemble des valeurs de $x$ (nombre de bons numéros) donnant
+lieu à un gain pour la grille $n$.
+\end{theorbox}
+
+```{r tbl-esperances-grilles}
+#| label: tbl-esperances-grilles
+#| tbl-cap: "Espérance de gain et taux de retour joueur (TRJ) par grille --- Keno FDJ (mise 1 euro)"
+#| dependson: "gains-calcul-long"
+
+# -----------------------------------------------------------------------
+# Calcul de l'espérance de gain pour chaque grille (mise 1 €)
+# et du taux de retour joueur (TRJ)
+# -----------------------------------------------------------------------
+df_esperances <- df_gains_long |>
+  group_by(n_coches) |>
+  summarise(
+    esperance = sum(gain_1eur * prob, na.rm = TRUE),
+    .groups   = "drop"
+  ) |>
+  mutate(
+    trj_pct   = round(esperance * 100, 2),
+    perte_moy = round(1 - esperance, 4)
+  ) |>
+  arrange(desc(n_coches))
+
+df_esperances |>
+  select(
+    `N° cochés`             = n_coches,
+    `Espérance E[G]`             = esperance,
+    `TRJ (%)`                    = trj_pct,
+    `Perte moy. / tirage (EUR)` = perte_moy
+  ) |>
+  kable(
+    digits   = 4,
+    booktabs = TRUE
+  ) |>
+  kable_styling(
+    latex_options     = c("hold_position", "striped"),
+    bootstrap_options = c("striped", "hover", "condensed"),
+    font_size         = 10,
+    full_width        = FALSE
+  ) |>
+  column_spec(3, bold = TRUE, color = "white",
+              background = spec_color(df_esperances$trj_pct,
+                                      option = "C", direction = -1,
+                                      begin  = 0.3, end = 0.9))
+```
+
+\begin{retenirbox}
+Le \textbf{taux de retour joueur (TRJ)} est la fraction de la mise que le joueur récupère
+\textbf{en moyenne} sur un très grand nombre de parties. Un TRJ de 50\,\% signifie que
+pour 1\,\euro{} joué, le joueur récupère en moyenne 0,50\,\euro{} et perd donc 0,50\,\euro{}.
+Ce taux est encadré réglementairement par l'ARJEL (Autorité de régulation des jeux en ligne).
+\end{retenirbox}
+
+```{r plot-esperances}
+#| label: plot-esperances
+#| fig-cap: "Espérance de gain selon le nombre de numéros cochés --- Keno FDJ (mise 1 euro, modèle 16/56). Toutes les barres restent sous la ligne pointillée rouge, confirmant que l'espérance est toujours négative pour le joueur."
+#| fig-height: 4.5
+#| fig-width: 8
+#| dependson: "esperances-grilles"
+
+df_esperances |>
+  ggplot(aes(x = factor(n_coches), y = esperance)) +
+  geom_col(aes(fill = esperance), width = 0.65, show.legend = FALSE) +
+  geom_hline(yintercept = 1, linetype = "dashed",
+             color = "#a12b4e", linewidth = 0.7) +
+  geom_text(aes(label = paste0(trj_pct, " %")),
+            vjust = -0.5, size = 3.2, fontface = "bold", color = "gray20") +
+  scale_fill_gradient(low = "#e8c4d0", high = "#a12b4e") +
+  scale_y_continuous(
+    labels = scales::label_number(suffix = " EUR", accuracy = 0.01),
+    limits = c(0, 1.10),
+    expand = expansion(mult = c(0, 0.02))
+  ) +
+  annotate("text", x = 0.6, y = 1.03, label = "Mise = 1 EUR",
+           color = "#a12b4e", size = 3, hjust = 0, fontface = "italic") +
+  labs(
+    title    = "Esperance de gain selon le nombre de numeros coches",
+    subtitle = "Keno FDJ --- mise de 1 euro --- 16 boules tirees sur 56",
+    x        = "Nombre de numeros coches",
+    y        = "Esperance de gain (EUR)",
+    caption  = "Source : gains officiels FDJ. La ligne pointillee rouge materialise la mise de 1 EUR.\nEn dessous de cette ligne, le joueur perd en esperance."
+  ) +
+  theme_pdf() +
+  theme(panel.grid.major.x = element_blank())
+```
+
+\begin{attentionbox}
+\textbf{Lecture du graphique :} Toutes les barres sont \textbf{sous la ligne pointillée rouge}
+(la mise de 1\,\euro{}), confirmant que l'\textbf{espérance de gain est toujours négative pour
+le joueur}, quelle que soit la grille choisie. Le TRJ affiché au-dessus de chaque barre (en
+\% de la mise) montre que la FDJ reverse entre 50\,\% et 60\,\% de la mise en gains --- la
+différence constituant la marge opératrice.
+\end{attentionbox}
+
+
+\newpage
+
+# Espérance de gain {#sec-esperance}
+
+## Définition et formule
+
+\begin{SaveVerbatim}{VerbEsperanceSimple}
+$$E[G] = \sum_{x=0}^{10} g(x) \cdot p(x)$$
+\end{SaveVerbatim}
+
+\begin{theorbox}
+L'\textbf{espérance mathématique} de gain est la valeur moyenne que le joueur peut espérer gagner par tirage. Elle se calcule comme la somme des gains pondérés par leurs probabilités :
+
+\smallskip\noindent
+\colorbox{gray!10}{\parbox{\dimexpr\linewidth-2\fboxsep\relax}{%
+  \setlength{\parindent}{0pt}%
+  \UseVerbatim[fontsize=\small]{VerbEsperanceSimple}%
+}}
+\smallskip
+
+$$E[G] = \sum_{x=0}^{10} g(x) \cdot p(x)$$
+
+où $g(x)$ est le gain pour $x$ bonnes boules, et $p(x)$ la probabilité d'en obtenir exactement $x$.
+\end{theorbox}
+
+## Calcul avec R
+
+```{r esperance}
+#| label: esperance
+
+result <- tibble(
+  x      = 0:10,
+  `p(x)` = dhyper(x, m = 16, n = 40, k = 10)
+) |>
+  arrange(desc(x)) |>
+  filter(!x %in% 1:4) |>
+  mutate(`g(x)` = c(200000, 2000, 150, 15, 5, 2, 2), .after = x)
+
+esperance <- result |>
+  summarise(esperance = sum(`g(x)` * `p(x)`))
+
+cat("Espérance de gain E[G] =", round(esperance$esperance, 4), "euro(s) pour une mise de 1 euro.")
+```
+
+\begin{attentionbox}
+L'espérance de gain est inférieure à 1 euro (la mise). Cela signifie que le joueur perd en moyenne de l'argent à chaque tirage --- c'est la \textbf{marge} intégrée par la FDJ dans le jeu. Ce résultat est fondamental en théorie des jeux et illustre pourquoi les jeux d'argent ne peuvent pas être des stratégies de gain à long terme.
+\end{attentionbox}
+
+\newpage
+
+# Simulations de Monte-Carlo {#sec-montecarlo}
+
+## Principe
+
+La \textbf{simulation de Monte-Carlo} consiste à simuler un grand nombre de tirages aléatoires pour estimer des probabilités ou des distributions. On l'utilise ici pour estimer la probabilité qu'un numéro sorte très peu de fois sur une série de 100 tirages.
+
+## Simulation simple avec une boucle
+
+```{r montecarlo-simple}
+#| label: montecarlo-simple
+
+set.seed(123)
+
+numeros <- c()
+for (t in 1:100) {
+  numeros <- c(numeros, sample(1:56, 16, replace = FALSE))
+}
+cat("Minimum d'apparition sur 100 tirages :", table(numeros) |> min())
+```
+
+Équivalent avec \texttt{replicate()} --- plus concis et plus rapide :
+
+```{r montecarlo-replicate}
+#| label: montecarlo-replicate
+
+set.seed(123)
+numeros_simu <- as.vector(replicate(100, sample(1:56, 16, replace = FALSE)))
+cat("Minimum (replicate) :", table(numeros_simu) |> min())
+```
+
+## Estimation d'une probabilité
+
+On répète l'expérience $N = 100$ fois pour estimer la probabilité qu'un numéro sorte 17 fois ou moins :
+
+```{r montecarlo-proba}
+#| label: montecarlo-proba
+
+set.seed(123)
+N <- 100
+
+valmin <- replicate(N, {
+  tirages <- replicate(100, sample(1:56, 16, replace = FALSE))
+  counts  <- table(factor(as.vector(tirages), levels = 1:56))
+  min(counts)
+})
+
+cat("Probabilité estimée P(min <= 17) =", sum(valmin <= 17) / N)
+```
+
+## Simulation à grande échelle (1 000 itérations)
+
+```{r montecarlo-grande-echelle}
+#| label: montecarlo-grande-echelle
+#| fig.cap: "Simulation de Monte-Carlo : distribution des minima sur 1~000 séries de 100 tirages"
+
+set.seed(123)
+n_simulations     <- 1000
+tirages_par_serie <- 100
+
+simuler_min <- function() {
+  resultats <- replicate(tirages_par_serie, sample(1:56, 16, replace = FALSE))
+  counts    <- table(factor(resultats, levels = 1:56))
+  return(min(counts))
+}
+
+simus    <- replicate(n_simulations, simuler_min())
+df_simus <- data.frame(id = 1:n_simulations, val_min = simus)
+
+ggplot(df_simus, aes(x = id, y = val_min)) +
+  geom_point(alpha = 0.3, color = "#282D87", size = 0.7) +
+  geom_smooth(method = "lm", color = "#a12b4e", se = TRUE) +
+  labs(
+    title    = "Simulation de Monte-Carlo : fréquence minimale d'apparition",
+    subtitle = "1 000 séries de 100 tirages --- Keno (16 boules parmi 56)",
+    x        = "Numéro de simulation",
+    y        = "Minimum d'apparition sur 100 tirages"
+  )
+
+cat("En moyenne, le numéro le moins sorti apparaît",
+    round(mean(simus), 1), "fois sur 100 tirages.")
+```
+
+\begin{retenirbox}
+La droite de régression (quasiment horizontale) confirme que le processus est \textbf{stationnaire} : le minimum d'apparition ne dérive pas au fil des simulations. C'est une propriété attendue d'un tirage véritablement aléatoire et uniforme.
+\end{retenirbox}
+
+\newpage
+
+# Partie III --- Méthodes de clustering {.unnumbered}
+
+\addcontentsline{toc}{part}{Partie III --- Méthodes de clustering}
+
+\newpage
+
+# Introduction au clustering {#sec-intro-clustering}
+
+Ce volet a été réalisé dans le cadre de la même unité d'enseignement **ESD113 --- Probabilités et statistiques avec R**. L'objectif principal est de reproduire et d'adapter le [code R](https://www.stats.gla.ac.uk/~nd29c/Software/ClusterReviewCode.R) utilisé dans l'article de référence **"A Survey of Popular R Packages for Cluster Analysis"** (Flynt \& Dean, 2016). Conçu à la manière d'un "pense-bête" (\textit{cheat sheet}) augmenté, il sert de guide pratique pour naviguer entre les différentes méthodes de clustering.
+
+## Qu'est-ce que le clustering ?
+
+Imaginez que l'on vous donne un grand sac contenant mille pièces de puzzle mélangées, issues de plusieurs boîtes différentes. Votre mission : les trier \textit{sans voir les images} des boîtes d'origine. Naturellement, vous examinerez les couleurs, les formes de bordures, les textures --- vous regrouperez les pièces qui \textit{se ressemblent}. Sans le savoir, vous appliquerez l'algorithme mental à la base de tout clustering.
+
+En statistique, le \textbf{clustering} (ou \textit{classification non supervisée}) consiste à regrouper automatiquement des observations similaires \textbf{sans connaître à l'avance} les étiquettes ou catégories. C'est l'opposé de la classification supervisée où un enseignant indique : « ceci est un client premium, ceci est un client standard ». Ici, la machine doit le découvrir \textit{seule}.
+
+\begin{analogiebox}
+Un algorithme de clustering appliqué à votre liste de courses pourrait découvrir,
+sans qu'on le lui dise, que vous achetez toujours ensemble des pâtes, de la sauce
+tomate et du parmesan --- et créer un « groupe culinaire » reflétant ce comportement.
+C'est de la connaissance extraite automatiquement de l'observation brute.
+\end{analogiebox}
+
+## Bref panorama historique
+
+### La petite (et longue) histoire de l'algorithme de Lloyd
+
+Si l'on devait décerner le prix de la "patience algorithmique", Stuart Lloyd serait sans doute sur le podium. Imaginez la scène : nous sommes en **1957**, dans les prestigieux Laboratoires Bell. Entre deux tasses de café noir et des montagnes de tubes à vide, Lloyd pose les bases de ce qui deviendra le moteur de calcul le plus utilisé au monde pour le clustering : l'algorithme de quantification par moindres carrés.
+
+À l'époque, son objectif n'est pas de segmenter des bases de données marketing, mais d'optimiser la modulation par impulsions codées (PCM). Lloyd rédige ses travaux dans un mémorandum interne technique... puis l'histoire semble s'arrêter là. Pendant que le papier prend la poussière dans les archives de Bell, un certain **James MacQueen** publie en 1967 un article où il baptise la méthode « K-means ». MacQueen rafle la gloire du nom, mais le "moteur" sous le capot reste celui de Lloyd.
+
+Il faudra attendre **1982** --- soit 25 ans après sa conception initiale ! --- pour que le travail de Lloyd [-@lloyd1982] soit enfin publié officiellement dans les *IEEE Transactions on Information Theory*. Un quart de siècle d'attente pour une idée qui, aujourd'hui, tourne en quelques millisecondes sur votre ordinateur. C'est un peu comme si quelqu'un inventait la roue en secret, la rangeait dans son garage, et attendait que tout le monde roule en carrosse pour enfin publier le brevet !
+
+Le clustering n'est pas une invention récente. Ses racines plongent profondément dans l'histoire des sciences.
+
+- **1894** --- Karl Pearson [-@pearson1894] utilise les premiers mélanges gaussiens pour analyser des populations de crabes dans la Baie de Naples. C'est l'acte de naissance des modèles de mélanges.
+- **Années 1950--1960** --- Les biologistes développent la *taxinomie numérique* pour classer les espèces. Les premières méthodes hiérarchiques émergent [@everitt2011].
+- **1963** --- Joe Ward [-@ward1963] formalise la méthode de liaison de Ward pour la classification hiérarchique.
+- **1967** --- James MacQueen [-@macqueen1967] publie l'article fondateur du **K-means**, la méthode la plus utilisée au monde.
+- **1977** --- Dempster, Laird et Rubin [-@dempster1977] formalisent l'algorithme **EM**, moteur des modèles de mélanges modernes.
+- **2002** --- Fraley et Raftery [-@fraley2002] publient la référence sur `Mclust`, qui automatise la sélection du modèle.
+
+## Objectifs et plan
+
+Ce volet guide pas à pas à travers \textbf{trois grandes familles de méthodes}, du plus simple au plus sophistiqué.
+
+\begin{enumerate}
+  \item Simulation de données structurées pour évaluer les algorithmes.
+  \item K-means, méthode du coude et ses \textbf{six variations d'implémentation}.
+  \item Classification hiérarchique ascendante et dendrogramme.
+  \item Modèles de mélanges gaussiens avec \texttt{Mclust}.
+\end{enumerate}
+
+Le fil conducteur est \textbf{unique} : les données simulées de Flynt \& Dean (2016) servent de laboratoire contrôlé pour \textbf{toutes} les méthodes. La vérité terrain connue ($cl\_real$) permet une évaluation rigoureuse et cohérente --- taux de réussite, taux d'erreur et ARI --- pour chaque algorithme présenté.
+
+\newpage
+
+# Préparation de l'environnement R pour le clustering {#sec-packages-clustering}
+
+## Les packages : la boîte à outils
+
+En R, les \textit{packages} sont des bibliothèques développées par la communauté scientifique mondiale. Chaque méthode est implémentée dans un package spécialisé, fruit de travaux de recherche dédiés.
+
+```{r packages-clustering}
+#| label: packages-clustering
+
+## tidyverse : écosystème complet de manipulation et visualisation
+library(tidyverse)
+
+## conflicted : arbitre les conflits de noms entre packages
+library(conflicted)
+
+## mvtnorm : simulation de lois normales multivariées
+library(mvtnorm)
+
+## mclust : modèles de mélanges gaussiens [Scrucca et al., 2016]
+library(mclust)
+
+## ggforce : extensions géométriques ggplot2
+library(ggforce)
+
+## viridis : palettes perceptuellement uniformes
+library(viridis)
+
+## ggdendro : dendrogrammes ggplot2
+library(ggdendro)
+
+## knitr + kableExtra : tableaux LaTeX qualité publication
+library(knitr)
+library(kableExtra)
+
+## broom : extraction standardisée de métriques de modèles
+library(broom)
+
+## factoextra : visualisation clustering (fviz_nbclust, etc.)
+library(factoextra)
+
+
+## Résolution explicite des conflits de namespace
+conflicts_prefer(dplyr::select)
+conflicts_prefer(dplyr::filter)
+conflicts_prefer(dplyr::lag)
+```
+
+\newpage
+
+# Simulation des données : créer un laboratoire contrôlé {#sec-simulation}
+
+## Pourquoi simuler ?
+
+Évaluer une méthode de clustering sur des données réelles pose un problème fondamental : on ne connaît pas les \textit{vrais} groupes, puisque c'est précisément ce qu'on cherche. La simulation résout ce problème en créant un monde artificiel où \textbf{la vérité est connue à l'avance}, ce qui permet de mesurer la qualité de chaque méthode avec précision.
+
+\begin{retenirbox}
+La simulation est le mannequin de crash-test de la statistique : on connaît exactement les forces appliquées, et on mesure comment chaque algorithme s'en sort. C'est le fondement de toute évaluation rigoureuse de méthodes.
+\end{retenirbox}
+
+## Fondements mathématiques : la loi normale multivariée
+
+### La loi normale univariée
+
+La loi normale (loi de Gauss, 1777--1855) est la distribution de probabilité la plus fondamentale en statistique [@johnson2002]. Sa densité est :
+
+```latex
+$$f(x) = \frac{1}{\sigma\sqrt{2\pi}} \exp\!\left(-\frac{(x-\mu)^2}{2\sigma^2}\right), \quad x \in \mathbb{R}$$
+```
+
+$$f(x) = \frac{1}{\sigma\sqrt{2\pi}} \exp\!\left(-\frac{(x-\mu)^2}{2\sigma^2}\right), \quad x \in \mathbb{R}$$
+
+où $\mu \in \mathbb{R}$ est la moyenne (centre) et $\sigma^2 > 0$ la variance (dispersion).
+
+### La loi normale multivariée
+
+Pour $p$ variables observées simultanément, on généralise avec la loi normale multivariée $\mathcal{N}_p(\bm{\mu}, \bm{\Sigma})$, de densité :
+
+```latex
+$$f(\bm{x}) = \frac{1}{(2\pi)^{p/2}|\bm{\Sigma}|^{1/2}} \exp\!\left(-\frac{1}{2}(\bm{x}-\bm{\mu})^\top\bm{\Sigma}^{-1}(\bm{x}-\bm{\mu})\right), \quad \bm{x} \in \mathbb{R}^p$$
+```
+
+$$f(\bm{x}) = \frac{1}{(2\pi)^{p/2}|\bm{\Sigma}|^{1/2}} \exp\!\left(-\frac{1}{2}(\bm{x}-\bm{\mu})^\top\bm{\Sigma}^{-1}(\bm{x}-\bm{\mu})\right), \quad \bm{x} \in \mathbb{R}^p$$
+
+Les paramètres clés sont :
+
+- $\bm{\mu} = (\mu_1, \ldots, \mu_p)^\top$ : le vecteur de moyennes (centre du nuage de points).
+- $\bm{\Sigma}$ : la matrice de covariance $p \times p$, symétrique définie positive, qui décrit la forme et l'orientation du nuage.
+
+### Le modèle de mélange gaussien
+
+Notre jeu de données sera un mélange de $K = 3$ gaussiennes bivariées. La densité totale du mélange est :
+
+```latex
+$$f(\bm{x}) = \sum_{k=1}^{K} \pi_k \cdot \mathcal{N}_2(\bm{x}\,|\,\bm{\mu}_k, \bm{\Sigma}_k), \qquad \sum_{k=1}^{K} \pi_k = 1,\; \pi_k > 0$$
+```
+
+$$f(\bm{x}) = \sum_{k=1}^{K} \pi_k \cdot \mathcal{N}_2(\bm{x}\,|\,\bm{\mu}_k, \bm{\Sigma}_k), \qquad \sum_{k=1}^{K} \pi_k = 1,\; \pi_k > 0$$
+
+```{r tbl-params-simulation}
+#| label: tbl-params-simulation
+#| echo: false
+#| tbl-cap: "Paramètres des trois composantes gaussiennes du mélange simulé."
+
+data.frame(
+  Groupe     = c("Groupe 1", "Groupe 2", "Groupe 3"),
+  Proportion = c("0.30", "0.40", "0.30"),
+  Moyenne    = c("(0, 0)", "(3, 5)", "(0, 6)"),
+  Covariance = c("sphérique $I_2$", "sphérique $I_2$", "Elliptique $\\Sigma_{ell}$"),
+  Difficulte = c("Facile", "Facile", "Difficile (ellipse inclinée)")
+) |>
+  kbl(booktabs = TRUE, escape = FALSE,
+      col.names = c("Groupe", "Proportion $\\pi_k$", "Moyenne $\\bm{\\mu}_k$",
+                    "Covariance $\\bm{\\Sigma}_k$", "Difficulté")) |>
+  kable_styling(latex_options = c("hold_position", "striped"), font_size = 9)
+```
+
+La matrice de covariance elliptique du Groupe 3 est :
+
+```latex
+$$\bm{\Sigma}_{ell} = \begin{pmatrix} 2 & 1.3 \\ 1.3 & 1 \end{pmatrix}$$
+```
+
+$$\bm{\Sigma}_{ell} = \begin{pmatrix} 2 & 1.3 \\ 1.3 & 1 \end{pmatrix}$$
+
+Elle traduit une variance plus forte selon $V_1$ et une corrélation positive entre $V_1$ et $V_2$ (covariance = $1.3 > 0$), ce qui crée l'ellipse inclinée à environ 45 degrés.
+
+## Simulation des variables continues
+
+### Vers une lecture plus nette : l'enveloppe convexe
+
+Pour obtenir une frontière "physique" nette autour de chaque groupe, nous utilisons le concept d'\textbf{enveloppe convexe} (\textit{Convex Hull}). Mathématiquement, l'enveloppe convexe d'un ensemble de points est le plus petit polygone convexe contenant tous ces points.
+
+\begin{analogiebox}
+Imaginez que chaque point de notre graphique soit un clou planté sur une planche. L'enveloppe convexe correspond à la forme que prendrait un élastique tendu que l'on relâcherait autour de tous les clous d'une même couleur. L'élastique s'appuierait uniquement sur les points les plus extérieurs, créant une frontière parfaite et sans "creux".
+\end{analogiebox}
+
+### Reproduction des couleurs originales de Flynt & Dean (2016)
+
+```{r fig-simul-donnees}
+#| label: fig-simul-donnees
+#| fig-cap: "Représentation par enveloppes convexes avec les couleurs de l'article original (Noir, Rouge, Vert)."
+
+## -- Graine pour la reproductibilité ---------------------------------
+set.seed(288)
+
+## -- Paramètres des 3 groupes ----------------------------------------
+pi_vec <- c(0.3, 0.4, 0.3)
+mu <- list(c(0, 0), c(3, 5), c(0, 6))
+
+sigma_sph <- diag(2)
+sigma_ell <- matrix(c(2, 1.3, 1.3, 1), nrow = 2, byrow = TRUE)
+
+## -- Tirage des étiquettes de groupe ---------------------------------
+cl_real <- sample(1:3, size = 600, replace = TRUE, prob = pi_vec)
+
+## -- Génération des coordonnées (V1, V2) de chaque individu ----------
+X_data <- purrr::map_dfr(cl_real, function(i) {
+  sigma_i <- if (i == 3L) sigma_ell else sigma_sph
+  rmvnorm(n = 1, mean = mu[[i]], sigma = sigma_i) |>
+    as_tibble()
+}) |>
+  set_names(c("V1", "V2"))
+
+X_plot <- X_data |>
+  mutate(Groupe = as.factor(cl_real)) |>
+  filter(!is.na(V1) & !is.na(V2))
+
+couleurs_article <- c("1" = "black", "2" = "red", "3" = "green3")
+
+ggplot(X_plot, aes(x = V1, y = V2, color = Groupe)) +
+  geom_point(alpha = 0.5, size = 1.2, shape = 18) +
+  ggforce::geom_mark_hull(
+    aes(fill = Groupe),
+    alpha = 0.10,
+    color = NA,
+    concavity = 10000,
+    na.rm = TRUE,
+    expand = unit(2, "mm")
+  ) +
+  scale_color_manual(values = couleurs_article,
+                     name   = "Groupe réel",
+                     labels = c("Groupe 1 (Black)", "Groupe 2 (Red)", "Groupe 3 (Green)")) +
+  scale_fill_manual(values = couleurs_article) +
+  labs(
+    title    = "Données simulées : séparation par enveloppes convexes",
+    subtitle = "Reproduction des couleurs originales de Flynt & Dean (2016)",
+    x = "V1", y = "V2"
+  ) +
+  theme_minimal() +
+  theme(legend.position = "bottom") +
+  guides(fill = "none")
+```
+
+\begin{attentionbox}
+Le Groupe 3 (en haut) forme une ellipse inclinée.
+Le K-means, qui suppose des clusters sphériques, aura du mal
+a le détecter correctement. Mclust, qui modélise explicitement
+les ellipses, le capturera bien.
+\end{attentionbox}
+
+\newpage
+
+# Méthodes de partitionnement géométrique {#sec-partitionnement}
+
+## K-means : la méthode des barycentres
+
+### Principe et intuition
+
+Le K-means est l'algorithme de clustering le plus célébre et le plus utilisé au monde [@macqueen1967; @lloyd1982]. Son principe est d'une simplicité remarquable :
+
+\begin{center}
+\textit{Chaque individu appartient au groupe dont le centre (la moyenne)
+lui est le plus proche.}
+\end{center}
+
+\begin{analogiebox}
+Imaginez 3 personnes dans une salle bondée, chacune criant :
+"Venez vers moi !" Chaque individu rejoint la plus proche.
+Puis chaque personne se déplace au centre géographique de son groupe.
+On recommence jusqu'à stabilisation.
+C'est exactement l'algorithme K-means.
+\end{analogiebox}
+
+### Formalisation mathématique
+
+K-means minimise la \textbf{somme des distances au carré intra-cluster} (WSS, \textit{Within-Cluster Sum of Squares}) :
+
+```latex
+\begin{equation}
+\mathrm{WSS} = \sum_{k=1}^{K} \sum_{\bm{x}_{i} \in C_{k}}
+  \lVert \bm{x}_{i} - \bm{\mu}_{k} \rVert^{2}
+\end{equation}
+```
+
+\begin{equation}
+\mathrm{WSS} = \sum_{k=1}^{K} \sum_{\bm{x}_{i} \in C_{k}}
+  \lVert \bm{x}_{i} - \bm{\mu}_{k} \rVert^{2}
+\end{equation}
+
+où $\bm{\mu}_{k} = \frac{1}{\lvert C_{k}\rvert} \sum_{\bm{x}_{i} \in C_{k}} \bm{x}_{i}$ est le \textbf{centroïde} du cluster $k$.
+
+L'algorithme procède en quatre étapes itératives :
+
+\begin{enumerate}
+  \item \textbf{Initialisation} : placer $K$ centroïdes aléatoirement.
+  \item \textbf{Attribution} : affecter chaque individu au centroïde le plus proche selon $d(\bm{x}, \bm{\mu}_{k}) = \lVert \bm{x} - \bm{\mu}_{k} \rVert$.
+  \item \textbf{Mise à jour} : recalculer chaque centroïde comme la moyenne de son groupe.
+  \item \textbf{Convergence} : répéter les étapes 2--3 jusqu'à stabilisation.
+\end{enumerate}
+
+### Choisir K : la méthode du coude
+
+La \textbf{méthode du coude} (\textit{elbow method}) calcule la WSS pour plusieurs valeurs de $K$ et identifie le point de rupture au-delà duquel le gain marginal devient négligeable.
+
+```{r fig-elbow}
+#| label: fig-elbow
+#| fig.height: 3.8
+#| fig-cap: "Méthode du coude. Le point rouge (K = 3) marque l'inflexion de la courbe : au-delà, ajouter un cluster n'apporte que peu de gain en inertie."
+
+elbow_data <- tibble(k = 1:9) |>
+  mutate(
+    model = purrr::map(k, ~ kmeans(X_data, centers = .x, nstart = 50)),
+    wss   = purrr::map_dbl(model, ~ .x$tot.withinss)
+  )
+
+ggplot(elbow_data, aes(x = k, y = wss)) +
+  geom_line(color = "gray70", linewidth = 0.9) +
+  geom_point(aes(color = (k == 3)), size = 3.5) +
+  scale_color_manual(values = c("black", "#B40000")) +
+  scale_x_continuous(breaks = 1:9) +
+  labs(
+    title = "Inertie intra-classe selon le nombre de clusters K",
+    x     = "Nombre de clusters K",
+    y     = "WSS (Within-Cluster Sum of Squares)"
+  ) +
+  guides(color = "none")
+```
+
+\begin{attentionbox}
+\textbf{Limites du K-means} :
+(1) il suppose des clusters sphériques, inadapté aux formes elliptiques ;
+(2) il est sensible aux valeurs aberrantes ;
+(3) il n'exprime aucune incertitude : chaque individu est assigné
+définitivement a un seul groupe ;
+(4) il ne fonctionne que sur des variables continues.
+\end{attentionbox}
+
+### Formalisation algorithmique du K-means
+
+Avant de comparer les variantes d'implémentation, il est utile de rappeler formellement le fonctionnement interne de l'algorithme K-means, tel que décrit dans Flynt \& Dean (2016).
+
+L'objectif mathématique est de partitionner $n$ observations $\{x_1, \ldots, x_n\} \subset \mathbb{R}^p$ en $k$ clusters $\{C_1, \ldots, C_k\}$ de façon à **minimiser l'inertie intra-classe totale** (WSS) :
+
+```latex
+$$
+\text{WSS}(k) = \sum_{j=1}^{k} \sum_{x_i \in C_j} \| x_i - \mu_j \|^2
+$$
+```
+
+$$
+\text{WSS}(k) = \sum_{j=1}^{k} \sum_{x_i \in C_j} \| x_i - \mu_j \|^2
+$$
+
+où $\mu_j = \frac{1}{|C_j|} \sum_{x_i \in C_j} x_i$ est le **centroïde** du cluster $C_j$.
+
+\vspace{0.5em}
+
+\begin{algorithm}[H]
+\DontPrintSemicolon
+\SetAlgoLined
+\SetKwInOut{Input}{Entrée}
+\SetKwInOut{Output}{Sortie}
+\SetKwComment{Comment}{$\triangleright$ }{}
+
+\Input{Données $X = \{x_1, \ldots, x_n\} \subset \mathbb{R}^p$, nombre de clusters $k$, répétitions \texttt{nstart}}
+\Output{Partition $\{C_1, \ldots, C_k\}$ et centroïdes $\{\mu_1, \ldots, \mu_k\}$}
+\BlankLine
+\For{$r = 1$ \KwTo \texttt{nstart}}{
+  Tirer $k$ centroïdes initiaux $\mu_1^{(0)}, \ldots, \mu_k^{(0)}$ aléatoirement\;
+  $t \leftarrow 0$\;
+  \BlankLine
+  \Repeat{convergence (assignations stables)}{
+    \Comment{Étape E — Assignation}
+    \For{$i = 1$ \KwTo $n$}{
+      $C^{(t+1)}(x_i) \leftarrow \arg\min_{j} \| x_i - \mu_j^{(t)} \|^2$\;
+    }
+    \Comment{Étape M — Mise à jour}
+    \For{$j = 1$ \KwTo $k$}{
+      $\mu_j^{(t+1)} \leftarrow \frac{1}{|C_j^{(t+1)}|} \sum_{x_i \in C_j^{(t+1)}} x_i$\;
+    }
+    $t \leftarrow t + 1$\;
+  }
+  Calculer $\mathrm{WSS}_r = \sum_{j=1}^{k} \sum_{x_i \in C_j} \| x_i - \mu_j \|^2$\;
+}
+\KwRet{La solution $r^*$ telle que $\mathrm{WSS}_{r^*} = \min_r \mathrm{WSS}_r$}
+\caption{K-means de Lloyd --- \texttt{kmeans(X, k, nstart)}}
+\end{algorithm}
+
+\begin{retenirbox}
+\textbf{Pourquoi \texttt{nstart = 50} ?} L'algorithme K-means est sensible à l'initialisation : selon les centroïdes tirés au départ, la convergence peut aboutir à un optimum local différent. \texttt{nstart} indique à R de relancer l'algorithme depuis \texttt{nstart} initialisations aléatoires indépendantes et de ne retenir que la meilleure solution (WSS minimale). Flynt \& Dean recommandent une valeur d'au moins 25--50 pour des résultats stables et reproductibles.
+\end{retenirbox}
+
+### Six variations pour générer la courbe WSS
+
+La méthode du coude peut être implémentée en R de six manières différentes. Ces six variations produisent des courbes WSS statistiquement identiques --- toutes indiquent $k = 3$ sur nos données --- mais diffèrent par leur lisibilité, leur réutilisabilité et leur expressivité.
+
+**Variation 1 --- Méthode manuelle (9 lignes distinctes)**
+
+```{r var1-manuelle}
+#| label: var1-manuelle
+#| fig-cap: "Variation 1 : méthode manuelle --- 9 appels explicites à kmeans()."
+#| fig.height: 3
+
+km1 <- kmeans(X_data, 1, nstart = 50); 
+km2 <- kmeans(X_data, 2, nstart = 50)
+km3 <- kmeans(X_data, 3, nstart = 50); 
+km4 <- kmeans(X_data, 4, nstart = 50)
+km5 <- kmeans(X_data, 5, nstart = 50); 
+km6 <- kmeans(X_data, 6, nstart = 50)
+km7 <- kmeans(X_data, 7, nstart = 50); 
+km8 <- kmeans(X_data, 8, nstart = 50)
+km9 <- kmeans(X_data, 9, nstart = 50)
+
+wss_man <- c(km1$tot.withinss, km2$tot.withinss, km3$tot.withinss,
+             km4$tot.withinss, km5$tot.withinss, km6$tot.withinss,
+             km7$tot.withinss, km8$tot.withinss, km9$tot.withinss)
+
+ggplot(tibble(k = 1:9, wss = wss_man), aes(k, wss)) +
+  geom_line(color = "gray60") + geom_point(size = 3) +
+  scale_x_continuous(breaks = 1:9) +
+  labs(title = "Variation 1 : Méthode manuelle", x = "K", y = "WSS") +
+  theme_pdf()
+```
+
+**Variation 2 --- Boucle for**
+
+```{r var2-for}
+#| label: var2-for
+#| fig-cap: "Variation 2 : boucle for --- logique séquentielle explicite."
+#| fig.height: 3
+
+wss_for <- numeric(9)
+for (i in 1:9) {
+  wss_for[i] <- kmeans(X_data, centers = i, nstart = 50)$tot.withinss
+}
+
+ggplot(tibble(k = 1:9, wss = wss_for), aes(k, wss)) +
+  geom_line(color = "gray60") + geom_point(size = 3) +
+  scale_x_continuous(breaks = 1:9) +
+  labs(title = "Variation 2 : Boucle For", x = "K", y = "WSS") +
+  theme_pdf()
+```
+
+**Variation 3 --- sapply (vectorisation Base R)**
+
+```{r var3-sapply}
+#| label: var3-sapply
+#| fig-cap: "Variation 3 : sapply --- vectorisation Base R concise."
+#| fig.height: 3
+
+wss_sapply <- sapply(1:9, function(k) {
+  kmeans(X_data, centers = k, nstart = 50)$tot.withinss
+})
+
+ggplot(tibble(k = 1:9, wss = wss_sapply), aes(k, wss)) +
+  geom_line(color = "steelblue") + geom_point() +
+  scale_x_continuous(breaks = 1:9) +
+  labs(title = "Variation 3 : sapply (Vectorisation)", x = "K", y = "WSS") +
+  theme_pdf()
+```
+
+**Variation 4 --- purrr (programmation fonctionnelle)**
+
+```{r var4-purrr}
+#| label: var4-purrr
+#| fig-cap: "Variation 4 : purrr --- traçabilité complète (modèles stockés). Point rouge = K optimal selon Flynt & Dean."
+#| fig.height: 3
+
+elbow_purrr <- tibble(k = 1:9) |>
+  mutate(
+    model = purrr::map(k, ~ kmeans(X_data, centers = .x, nstart = 50)),
+    wss   = purrr::map_dbl(model, ~ .x$tot.withinss)
+  )
+
+ggplot(elbow_purrr, aes(k, wss)) +
+  geom_line(linewidth = 0.9, color = "gray60") +
+  geom_point(aes(color = (k == 3)), size = 4) +
+  scale_color_manual(values = c("black", "#B40000"), guide = "none") +
+  scale_x_continuous(breaks = 1:9) +
+  labs(title = "Variation 4 : purrr (Programmation fonctionnelle)", x = "K", y = "WSS") +
+  theme_pdf()
+```
+
+**Variation 5 --- broom (métriques standardisées)**
+
+```{r var5-broom}
+#| label: var5-broom
+#| fig-cap: "Variation 5 : broom --- extraction standardisée de métriques multiples."
+#| fig.height: 3
+
+elbow_broom <- tibble(k = 1:9) |>
+  mutate(
+    model = purrr::map(k, ~ kmeans(X_data, centers = .x, nstart = 50)),
+    stats = purrr::map(model, broom::glance)
+  ) |>
+  tidyr::unnest(stats)
+
+ggplot(elbow_broom, aes(k, tot.withinss)) +
+  geom_line(color = "green4") + geom_point() +
+  scale_x_continuous(breaks = 1:9) +
+  labs(title = "Variation 5 : broom (métriques standardisées)", y = "WSS", x = "K") +
+  theme_pdf()
+```
+
+**Variation 6 --- factoextra (clé en main)**
+
+```{r var6-factoextra}
+#| label: var6-factoextra
+#| fig-cap: "Variation 6 : factoextra --- graphique publication-ready en une ligne. La ligne pointillée matérialise le coude en K = 3."
+#| fig.height: 3.5
+
+fviz_nbclust(X_data, kmeans, method = "wss", k.max = 9, nstart = 50) +
+  geom_vline(xintercept = 3, linetype = 2, color = "firebrick") +
+  labs(title = "Variation 6 : factoextra (Clé en main)") +
+  theme_pdf()
+```
+
+```{r tbl-synthese-variations}
+#| label: tbl-synthese-variations
+#| echo: false
+#| tbl-cap: "Tableau de synthèse des six variations d'implémentation de la méthode du coude."
+
+data.frame(
+  Methode    = c("Manuelle", "Boucle For", "sapply", "purrr", "broom", "factoextra"),
+  Avantage   = c("Transparence totale", "Logique universelle", "Concis (Base R)",
+                 "Traçabilité complète", "Métriques multiples", "Rapidité, esthétique"),
+  Inconvenient = c("Très verbeux", "Plus de lignes", "Modèle perdu",
+                   "Syntaxe complexe", "Package sup.", "\"Boîte noire\""),
+  Usage      = c("Apprentissage", "Débutants", "Scripts légers",
+                 "Pipelines DS", "Rapports stats", "Exploration")
+) |>
+  kbl(booktabs = TRUE, linesep = "",
+      col.names = c("Méthode", "Avantage principal", "Inconvénient", "Usage idéal"),
+      align = "llll") |>
+  kable_styling(latex_options = c("striped", "hold_position"), font_size = 9)
+```
+
+\begin{retenirbox}
+Les six courbes WSS produites sont \textbf{statistiquement identiques} : toutes indiquent un coude en $k = 3$, confirmant exactement la structure simulée par Flynt \& Dean. Le choix de la variation est donc un choix de \textbf{style de code} et de contexte d'usage.
+\end{retenirbox}
+
+## Superposition K-means / vérité terrain
+
+### Code R : résultats K-means et des données simulées (les 3 gaussiennes)
+
+```{r fig-kmeans-eval}
+#| label: fig-kmeans-eval
+#| fig-cap: "Évaluation visuelle du K-means avec enveloppes convexes strictes (définition mathématique par segments reliant les points extrêmes)."
+
+set.seed(123)
+km_res <- kmeans(X_data, centers = 3, nstart = 25)
+
+X_eval <- X_data |>
+  mutate(
+    Vrai_Groupe = as.factor(cl_real),
+    Cluster_KM  = as.factor(km_res$cluster)
+  )
+
+ggplot(X_eval, aes(x = V1, y = V2)) +
+  geom_point(aes(color = Vrai_Groupe), alpha = 0.6, size = 1.2, shape = 18) +
+  ggforce::geom_mark_hull(
+    aes(fill = Cluster_KM, group = Cluster_KM),
+    alpha = 0.10,
+    color = "gray40",
+    linetype = "solid",
+    concavity = 10000,
+    radius = unit(0, "mm"),
+    expand = unit(0, "mm"),
+    na.rm = TRUE
+  ) +
+  scale_color_manual(values = couleurs_article, name = "Vérité Terrain") +
+  scale_fill_manual(values = couleurs_article) +
+  labs(
+    title    = "Évaluation K-means : Enveloppes Convexes Strictes",
+    subtitle = "Polygones reliant les points extrêmes de chaque cluster",
+    x = "V1", y = "V2"
+  ) +
+  theme_minimal() +
+  theme(legend.position = "bottom") +
+  guides(fill = "none")
+```
+
+### Analyse des résultats : limites géométriques et conflits de modèles
+
+L'examen de la figure de superposition entre les enveloppes convexes du K-means et les points de la vérité terrain permet de dresser un bilan contrasté de la performance de l'algorithme. L'analyse visuelle révèle trois comportements distincts :
+
+\textbf{1. Une isolation réussie pour le Groupe 1 (Noir)} Le Groupe 1 est identifié avec une grande précision. Son isolement géographique par rapport aux deux autres composantes permet au K-means de tracer une frontière nette.
+
+\textbf{2. Une "fuite" structurelle sur le Groupe 2 (Rouge)} Une faiblesse notable apparaît au niveau du Groupe 2. L'enveloppe convexe définie par le K-means ne parvient pas à englober l'intégralité des points rouges. En raison de la proximité immédiate du Groupe 3, l'algorithme "tranche" l'espace de manière linéaire.
+
+\textbf{3. Le Groupe 3 (Vert) : l'échec face à l'ellipticité} Le Groupe 3 concentre les erreurs les plus visibles. Son enveloppe convexe englobe indûment de nombreux points appartenant au Groupe 2. Ce phénomène s'explique par la nature même du K-means : l'algorithme cherche à minimiser la variance intra-classe de manière sphérique (distance euclidienne classique).
+
+\begin{attentionbox}
+En conclusion, si le Groupe 1 valide l'efficacité de l'approche dans des conditions simples, les Groupes 2 et 3 démontrent que la propreté visuelle d'un clustering ne garantit pas sa justesse statistique. Le K-means impose sa propre géométrie (sphérique) aux données au lieu de s'adapter à la leur (elliptique).
+\end{attentionbox}
+
+### Analyse de la performance du partitionnement (K=3)
+
+```{r perf-kmeans}
+#| label: perf-kmeans
+
+km3 <- kmeans(X_data, 3, nstart = 50)
+tab_km <- table(cl_real, km3$cluster)
+cat("Table de contingence K-means vs vérité terrain :\n")
+print(tab_km)
+
+reussite_points <- sum(apply(tab_km, 1, max))
+total_points    <- sum(tab_km)
+taux_reussite   <- (reussite_points / total_points) * 100
+taux_erreur     <- 100 - taux_reussite
+```
+
+```{r tbl-perf-kmeans}
+#| label: tbl-perf-kmeans
+#| echo: false
+#| tbl-cap: "Analyse de la précision du K-means (K=3) sur les données Flynt & Dean."
+
+data.frame(
+  Indicateur = c("Points bien classés", "Taux de réussite", "Taux d'erreur"),
+  Valeur     = c(
+    paste0(reussite_points, " / ", total_points),
+    paste0(round(taux_reussite, 2), " %"),
+    paste0(round(taux_erreur, 2), " %")
+  )
+) |>
+  kbl(booktabs = TRUE, align = "lc",
+      col.names = c("Indicateur de performance", "Résultat")) |>
+  kable_styling(latex_options = c("hold_position"), full_width = FALSE) |>
+  row_spec(2, bold = TRUE, color = "white", background = "#228B22") |>
+  row_spec(3, bold = TRUE, color = "white", background = "#CD5C5C")
+```
+
+\begin{attentionbox}
+\textbf{Note sur l'interprétation :} L'essentiel de l'erreur provient du Groupe 3 (elliptique). Le K-means "grignote" les extrémités de l'ellipse pour satisfaire sa propre logique de compacité circulaire, générant un biais structurel inévitable.
+\end{attentionbox}
+
+\begin{retenirbox}
+La performance d'un algorithme de clustering dépend moins de sa complexité informatique que de l'adéquation entre ses hypothèses géométriques et la structure réelle des données.
+\end{retenirbox}
+
+\newpage
+
+## Classification hiérarchique ascendante (CHA)
+
+### Principe
+
+La \textbf{classification hiérarchique ascendante} (CHA) construit un \textbf{dendrogramme} --- un arbre de fusion représentant quels individus ou groupes ont été réunis, et à quelle distance [@everitt2011]. Elle ne requiert pas de spécifier $K$ à l'avance.
+
+La liaison moyenne (UPGMA) définit la distance entre deux groupes $A$ et $B$ comme la moyenne de toutes les distances inter-individuelles :
+
+```latex
+$$d(A, B) = \frac{1}{|A| \cdot |B|} \sum_{i \in A} \sum_{j \in B} d(x_i, x_j)$$
+```
+
+$$d(A, B) = \frac{1}{|A| \cdot |B|} \sum_{i \in A} \sum_{j \in B} d(x_i, x_j)$$
+
+```{r fig-dendro-simple}
+#| label: fig-dendro-simple
+#| fig-cap: "Dendrogramme de classification hiérarchique (liaison moyenne, 600 individus). La hauteur d'une jonction représente la distance de fusion. Pour K = 3, on coupe au niveau de la 3e plus grande fusion."
+
+d_mat   <- dist(X_data, method = "euclidean")
+h_avg   <- hclust(d_mat, method = "average")
+
+ggdendrogram(h_avg, rotate = FALSE, size = 0.15) +
+  labs(
+    title    = "Dendrogramme de classification hiérarchique",
+    subtitle = "Liaison moyenne (UPGMA) --- 600 individus"
+  ) +
+  theme(axis.text.x = element_blank(),
+        axis.ticks.x = element_blank())
+```
+
+### La méthode hiérarchique CAH sur les données simulées
+
+Dans l'article de Flynt \& Dean (2016), la méthode du lien moyen peut s'avérer encore moins performante que le K-means sur ces structures, entraînant un taux d'erreur avoisinant les 30\%. La raison fondamentale : la CAH fusionne des sous-groupes de façon **irréversible** (*greedy*), sans pouvoir réassigner un point mal placé.
+
+```{r fig-dendro-color}
+#| label: fig-dendro-color
+#| fig-cap: "Dendrogramme (lien moyen, 600 individus) avec découpage en 3 clusters selon les couleurs de l'article."
+
+res.hc <- hclust(dist(X_data), method = "average")
+
+fviz_dend(res.hc,
+          k          = 3,
+          cex        = 0.15,
+          lwd        = 0.30,
+          rect       = TRUE,
+          rect_fill  = TRUE,
+          rect_lty   = 1,
+          palette    = c("black", "red", "green3"),
+          main       = "Dendrogramme (Average Linkage)",
+          xlab       = "Observations",
+          ylab       = "Distance Euclidienne",
+          ggtheme    = theme_minimal()) +
+  # Forcer l'épaisseur sur tous les segments du dendrogramme
+  scale_linewidth(range = c(0.30, 0.30)) +
+  theme(
+    axis.text.x  = element_blank(),
+    legend.position = "none"          # <-- supprime toute légende
+  )
+```
+
+### La version circulaire
+
+```{r fig-dendro-circulaire}
+#| label: fig-dendro-circular
+#| fig-cap: "Dendrogramme circulaire (lien moyen, 600 individus) avec découpage en 3 clusters."
+
+library(patchwork)
+library(grid)
+
+# 1. Construction du plot
+p_circ <- fviz_dend(res.hc,
+                    k           = 3,
+                    type        = "circular",
+                    cex         = 0.15,
+                    rect        = TRUE,
+                    rect_fill   = TRUE,
+                    palette     = c("black", "red", "green3"),
+                    main        = "Dendrogramme Circulaire (Average Linkage)",
+                    ggtheme     = theme_void())
+
+# 2. Patch linewidth
+for (i in seq_along(p_circ$layers)) {
+  geom_class <- class(p_circ$layers[[i]]$geom)
+  if (any(geom_class %in% c("GeomSegment", "GeomCurve", "GeomPath"))) {
+    p_circ$layers[[i]]$aes_params$linewidth <- 0.30
+    p_circ$layers[[i]]$aes_params$size      <- 0.30
+  }
+}
+
+p_circ <- p_circ +
+  scale_linewidth(range = c(0.30, 0.30)) +
+  theme_void() +
+  theme(legend.position = "none")
+
+# 3. Hack panel_params pour virer les labels radiaux
+gb <- ggplot_build(p_circ)
+gb$layout$panel_params[[1]]$r.labels <- character(0)
+gb$layout$panel_params[[1]]$r.major  <- numeric(0)
+gb$layout$panel_params[[1]]$r.minor  <- numeric(0)
+gt <- ggplot_gtable(gb)
+
+# 4. Rendu compatible Quarto via wrap_elements
+wrap_elements(gt)
+```
+
+### Le calcul (30 % d'erreur)
+
+Pour retrouver les chiffres de l'article, il faut regarder si les points de **différentes couleurs** sont mélangés dans le même cluster :
+
+```{r calcul-cah}
+#| label: calcul-cah
+
+hRed  <- hclust(dist(X_data[1:2]), method = "average")
+H2cut <- cutree(hRed, k = 3)
+table(cl_real, H2cut)
+```
+
+Taux de réussite : $(237+177+4)/600 = 69{,}7\,\%$ \quad Taux d'erreur : $182/600 = 30{,}3\,\%$
+
+\begin{attentionbox}
+\textbf{Le constat de Flynt \& Dean :} Alors que le K-means affiche environ 7--10\% d'erreur, la méthode hiérarchique dépasse ici les 30\% d'erreur. Les deux groupes sphériques, trop proches, sont fusionnés en un "super-cluster" artificiel par le lien moyen, tandis que le groupe vert (elliptique) se retrouve fragmenté.
+\end{attentionbox}
+
+\begin{retenirbox}
+La méthode hiérarchique est utile pour explorer la structure des données, mais pour un partitionnement robuste sur ces données simulées, le K-means (et a fortiori Mclust) reste largement supérieur.
+\end{retenirbox}
+
+\newpage
+
+# Méthodes basées sur les modèles probabilistes {#sec-mclust}
+
+## Modèles de mélanges gaussiens : Mclust
+
+### Du déterministe au probabiliste
+
+Avec K-means et la CHA, chaque individu est assigné a exactement un groupe, sans la moindre nuance. Les \textbf{Modèles de Mélanges Gaussiens} (GMM) apportent une vision plus honnête : chaque individu appartient a chaque groupe avec une certaine probabilité. Formellement :
+
+```latex
+$$f(\bm{x}) = \sum_{k=1}^{K} \pi_k \cdot \mathcal{N}_p(\bm{x}\,|\,\bm{\mu}_k, \bm{\Sigma}_k)$$
+```
+
+$$f(\bm{x}) = \sum_{k=1}^{K} \pi_k \cdot \mathcal{N}_p(\bm{x}\,|\,\bm{\mu}_k, \bm{\Sigma}_k)$$
+
+\begin{analogiebox}
+Le K-means dit : "Tu es un client premium, point." Le GMM dit : "Tu es probablement un client premium à 75\%, standard à 20\% et VIP à 5\%." C'est nettement plus nuancé et réaliste.
+\end{analogiebox}
+
+### L'algorithme EM
+
+Les paramètres $\{\pi_k, \bm{\mu}_k, \bm{\Sigma}_k\}_{k=1}^{K}$ sont estimés par l'algorithme EM [@dempster1977], qui alterne deux étapes jusqu'à convergence.
+
+\textbf{Étape E (Expectation)} --- calcul des responsabilités $r_{ik}$ :
+
+```latex
+$$r_{ik} = \frac{\pi_k \cdot \mathcal{N}_p(x_i|\,\bm{\mu}_k, \bm{\Sigma}_k)}{\sum_{j=1}^{K} \pi_j \cdot \mathcal{N}_p(x_i|\,\bm{\mu}_j, \bm{\Sigma}_j)}$$
+```
+
+$$r_{ik} = \frac{\pi_k \cdot \mathcal{N}_p(x_i|\,\bm{\mu}_k, \bm{\Sigma}_k)}{\sum_{j=1}^{K} \pi_j \cdot \mathcal{N}_p(x_i|\,\bm{\mu}_j, \bm{\Sigma}_j)}$$
+
+\textbf{Étape M (Maximization)} --- mise à jour des paramètres :
+
+```latex
+$$\hat{\pi}_k = \frac{1}{n}\sum_i r_{ik}, \qquad
+\hat{\bm{\mu}}_k = \frac{\sum_i r_{ik} x_i}{\sum_i r_{ik}}, \qquad
+\hat{\bm{\Sigma}}_k = \frac{\sum_i r_{ik}(x_i - \hat{\bm{\mu}}_k)(x_i - \hat{\bm{\mu}}_k)^\top}{\sum_i r_{ik}}$$
+```
+
+$$\hat{\pi}_k = \frac{1}{n}\sum_i r_{ik}, \qquad
+\hat{\bm{\mu}}_k = \frac{\sum_i r_{ik} x_i}{\sum_i r_{ik}}, \qquad
+\hat{\bm{\Sigma}}_k = \frac{\sum_i r_{ik}(x_i - \hat{\bm{\mu}}_k)(x_i - \hat{\bm{\mu}}_k)^\top}{\sum_i r_{ik}}$$
+
+### Sélection automatique via le BIC
+
+Mclust [@fraley2002; @scrucca2016] sélectionne automatiquement $K$ et la structure de covariance en maximisant le **Critère d'Information Bayésien** [@schwarz1978] :
+
+```latex
+$$\text{BIC} = 2\ln\hat{L} - d\ln n$$
+```
+
+$$\text{BIC} = 2\ln\hat{L} - d\ln n$$
+
+```{r mclust-fit}
+#| label: mclust-fit
+
+mc_model_v2 <- Mclust(X_data[, 1:2], G = 3)
+tab_mc_v2   <- table(Vérité = cl_real, Mclust = mc_model_v2$classification)
+```
+
+```{r fig-mclust-hull-v2}
+#| label: fig-mclust-hull-v2
+#| fig-cap: "Mclust (G=3) : enveloppes convexes étiquetées. Les contours épousent la forme elliptique du Groupe 3, contrairement aux enveloppes du K-means."
+
+mc_res_v2 <- Mclust(X_data[, 1:2], G = 3)
+
+X_mclust_v2 <- X_data |>
+  mutate(
+    Verite         = as.factor(cl_real),
+    Cluster_Mclust = as.factor(mc_res_v2$classification)
+  )
+
+bleu_v2 <- rgb(0, 70, 127, maxColorValue = 255)
+
+ggplot(X_mclust_v2, aes(x = V1, y = V2)) +
+  geom_point(aes(color = Verite), alpha = 0.6, size = 1.2, shape = 18) +
+  ggforce::geom_mark_hull(
+    aes(fill = Cluster_Mclust, group = Cluster_Mclust,
+        label = paste("Cluster", Cluster_Mclust)),
+    alpha = 0.10,
+    color = bleu_v2,
+    linetype = "solid",
+    concavity = 10000,
+    radius = unit(0, "mm"),
+    expand = unit(0, "mm"),
+    label.buffer  = unit(5, "mm"),
+    label.fontsize = 9,
+    label.fontface = "bold",
+    na.rm = TRUE
+  ) +
+  scale_color_manual(values = couleurs_article, name = "Vérité Terrain") +
+  scale_fill_manual(values = couleurs_article) +
+  labs(
+    title    = "Mclust : Identification des structures gaussiennes",
+    subtitle = "Les étiquettes désignent les populations identifiées par l'algorithme",
+    x = "Variable V1", y = "Variable V2"
+  ) +
+  theme_pdf() +
+  theme(legend.position = "bottom",
+        plot.title      = element_text(face = "bold")) +
+  guides(fill = "none")
+```
+
+```{r tbl-perf-mclust}
+#| label: tbl-perf-mclust
+#| echo: false
+#| tbl-cap: "Performance du modèle Mclust (G=3) sur les données Flynt & Dean."
+
+reussite_mc    <- sum(apply(tab_mc_v2, 1, max))
+taux_reussite_mc <- (reussite_mc / nrow(X_data)) * 100
+taux_erreur_mc <- 100 - taux_reussite_mc
+
+data.frame(
+  Indicateur = c("Points bien capturés", "Taux de réussite (Capture)", "Taux d'erreur"),
+  Résultat   = c(
+    paste0(reussite_mc, " / 600"),
+    paste0(round(taux_reussite_mc, 2), " %"),
+    paste0(round(taux_erreur_mc, 2), " %")
+  )
+) |>
+  kbl(booktabs = TRUE, align = "lc") |>
+  kable_styling(latex_options = "hold_position") |>
+  row_spec(2, bold = TRUE, color = "white", background = "#228B22")
+```
+
+```{r fig-mclust-bic-fviz-v2}
+#| label: fig-mclust-bic-fviz-v2
+#| fig-cap: "Sélection du modèle optimal par critère BIC (visualisation factoextra). Le meilleur modèle est clairement identifié pour K=3."
+
+mc_full_fviz <- Mclust(X_data[, 1:2], G = 1:9)
+fviz_mclust_bic(mc_full_fviz,
+                palette = "jco",
+                legend  = "right",
+                ggtheme = theme_minimal())
+```
+
+
+```{r fig-mclust-ellipses-v2}
+#| label: fig-mclust-ellipses-v2
+#| fig-cap: "Structure des populations identifiées par Mclust avec ellipses de confiance à 95%."
+
+ggplot(X_mclust_v2, aes(x = V1, y = V2, color = Cluster_Mclust)) +
+  geom_point(alpha = 0.5, size = 1.5, shape = 16) +
+  stat_ellipse(aes(fill = Cluster_Mclust), geom = "polygon",
+               alpha = 0.1, level = 0.95) +
+  scale_color_manual(values = c("black", "red", "green3")) +
+  scale_fill_manual(values  = c("black", "red", "green3")) +
+  labs(title    = "Structure des populations identifiées",
+       subtitle = "Les ellipses de confiance illustrent la modélisation gaussienne") +
+  theme_pdf()
+```
+
+```{r fig-mclust-uncertainty-v2}
+#| label: fig-mclust-uncertainty-v2
+#| fig-cap: "Cartographie de l'incertitude de classification Mclust. Les points rouges signalent les frontières de décision ambiguës."
+
+X_mclust_v2$Uncertainty <- mc_res_v2$uncertainty
+
+ggplot(X_mclust_v2, aes(x = V1, y = V2, color = Uncertainty)) +
+  geom_point(size = 2) +
+  scale_color_gradient(low = "gray80", high = "firebrick1") +
+  labs(title    = "Zones de doute de l'algorithme Mclust",
+       subtitle = "Les points rouges marquent les frontières de décision ambiguës",
+       color    = "Incertitude") +
+  theme_pdf()
+```
+
+**Calcul du taux de réussite Mclust**
+
+```latex
+$$T_{réussite} = \frac{177 + 229 + 186}{600} = \frac{592}{600} \approx 0{,}9867 \quad \Rightarrow \quad \textbf{98,67\,\%}$$
+```
+
+$$T_{réussite} = \frac{177 + 229 + 186}{600} = \frac{592}{600} \approx 0{,}9867 \quad \Rightarrow \quad \textbf{98,67\,\%}$$
+
+```latex
+$$T_{erreur} = 1 - 0{,}9867 = 0{,}0133 = \frac{8}{600} \approx 1{,}33\,\%$$
+```
+
+$$T_{erreur} = 1 - 0{,}9867 = 0{,}0133 = \frac{8}{600} \approx 1{,}33\,\%$$
+
+\begin{retenirbox}
+\textbf{Le triomphe de Mclust :} En ne forçant pas une structure circulaire, \texttt{mclust} parvient à capturer l'intégralité de l'ellipse verte sans déborder sur les groupes voisins. C'est la conclusion majeure de Flynt \& Dean : pour des données réelles complexes, \textbf{le choix du modèle statistique prime sur la simplicité géométrique}.
+\end{retenirbox}
+
+\newpage
+
+
+# Comparaison et synthèse des méthodes {#sec-comparaison}
+
+## Tableau comparatif des performances
+
+```{r tbl-comparaison-methodes}
+#| label: tbl-comparaison-methodes
+#| echo: false
+#| tbl-cap: "Comparaison des méthodes de clustering sur les données simulées de Flynt & Dean (2016). L'ARI quantifie l'adéquation avec la vérité terrain : ARI = 1 signifie correspondance parfaite, ARI = 0 correspond au hasard."
+
+set.seed(42)
+km_cmp  <- kmeans(X_data, centers = 3, nstart = 50)
+ari_km  <- round(mclust::adjustedRandIndex(km_cmp$cluster, cl_real), 3)
+
+res_hc_cmp <- hclust(dist(X_data), method = "average")
+cl_cah     <- cutree(res_hc_cmp, k = 3)
+ari_cah    <- round(mclust::adjustedRandIndex(cl_cah, cl_real), 3)
+
+mc_cmp <- Mclust(X_data[, 1:2], G = 3, verbose = FALSE)
+ari_mc  <- round(mclust::adjustedRandIndex(mc_cmp$classification, cl_real), 3)
+
+tbl_comp <- data.frame(
+  Methode = c("K-means (K=3)", "CHA — Lien moyen (K=3)", "Mclust GMM (K=3)"),
+  Donnees = c("Continues (V1, V2)", "Continues (V1, V2)", "Continues (V1, V2)"),
+  Forme   = c("Sphérique", "Quelconque", "Elliptique"),
+  K_auto  = c("Non", "Coupure dendro", "BIC auto"),
+  ARI     = c(ari_km, ari_cah, ari_mc)
+)
+
+kbl(tbl_comp,
+    booktabs  = TRUE,
+    linesep   = "",
+    col.names = c("Méthode", "Données utilisées", "Forme des clusters",
+                  "K automatique ?", "ARI vs vérité terrain"),
+    align = "lllll") |>
+  kable_styling(
+    latex_options = c("striped", "hold_position"),
+    stripe_color  = "gray!10",
+    font_size     = 9
+  ) |>
+  column_spec(1, bold = TRUE) |>
+  column_spec(5, bold = TRUE) |>
+  row_spec(which(tbl_comp$ARI == max(tbl_comp$ARI)),
+           bold = TRUE, background = "green!8")
+```
+
+\begin{retenirbox}
+\textbf{Lecture du tableau :} Les trois méthodes sont évaluées sur les mêmes variables continues $(V_1, V_2)$ et la même vérité terrain, ce qui rend les ARI directement comparables. Mclust domine grâce à sa modélisation elliptique, tandis que la CHA souffre de ses fusions irréversibles (30\,\% d'erreur).
+\end{retenirbox}
+
+\newpage
+
+# Conclusion générale {#sec-conclusion}
+
+## Bilan du parcours : de R aux méthodes non supervisées
+
+Ce document a constitué un voyage pédagogique en trois actes, tous ancrés dans l'unité d'enseignement ESD113 de Monsieur Karim Kiliani.
+
+Le \textbf{premier acte} nous a conduits des fondements de R et de Quarto jusqu'à la maîtrise du Tidyverse : manipulation de données, statistiques descriptives, visualisation, et pipe natif. Ces outils constituent la grammaire de base de tout travail d'analyse avec R.
+
+Le \textbf{deuxième acte} a appliqué cette grammaire à un cas concret : les données de tirage du Keno. Chemin faisant, nous avons exploré le pivot, la modélisation probabiliste par la loi hypergéométrique, le calcul de l'espérance de gain et la simulation de Monte-Carlo. Ce dernier outil --- répéter à grande échelle des tirages aléatoires pour estimer des distributions --- est l'un des plus puissants de la boîte à outils statistique, et sa mise en œuvre en R s'avère remarquablement concise.
+
+Le \textbf{troisième acte} a plongé dans les méthodes de clustering, en reproduisant et en enrichissant les résultats de l'article fondateur de Flynt \& Dean (2016). Trois méthodes ont été passées au crible sur un même jeu de données simulées :
+
+\begin{enumerate}
+  \item \textbf{K-means} : rapide, explicable, mais contraint par une hypothèse sphérique qui le met en difficulté face aux structures elliptiques. Six variations d'implémentation ont montré qu'un même résultat statistique peut s'écrire de la ligne artisanale au graphique automatisé.
+  \item \textbf{La CHA} : précieuse pour l'exploration multi-échelle via le dendrogramme, mais pénalisée par ses fusions irréversibles (30\,\% d'erreur sur nos données).
+  \item \textbf{Mclust} : champion incontesté, avec 98,67\,\% de réussite, grâce à sa modélisation elliptique et à la sélection automatique du modèle via le BIC.
+\end{enumerate}
+
+## Ce que les données simulées nous ont appris
+
+L'utilisation d'un fil conducteur unique --- les données de Flynt \& Dean (2016) --- a mis en lumière une leçon centrale : \textbf{le groupe elliptique est le vrai révélateur des hypothèses implicites de chaque algorithme}. K-means (7\,\% d'erreur sur ce groupe), CHA (30\,\% d'erreur globale), Mclust (1,33\,\% d'erreur) --- ces chiffres ne décrivent pas trois niveaux de complexité informatique, mais trois façons différentes de "voir" les données.
+
+## La hiérarchie de performance (contexte-dépendante)
+
+Pour ces données continues simulées, la hiérarchie de performance est claire :
+
+```latex
+\begin{equation}
+\texttt{Mclust} \;>\; \texttt{K-means} \;>\; \texttt{CHA}
+\end{equation}
+```
+
+\begin{equation}
+\texttt{Mclust} \;>\; \texttt{K-means} \;>\; \texttt{CHA}
+\end{equation}
+
+Cette hiérarchie n'est cependant pas universelle. Elle devient une \textit{carte de recommandations contextuelles} :
+
+\begin{center}
+\begin{tabular}{ll}
+\toprule
+\textbf{Situation} & \textbf{Méthode recommandée} \\
+\midrule
+Exploration rapide, $N$ grand & K-means (nstart élevé) \\
+Clusters gaussiens, $K$ inconnu & Mclust (BIC automatique) \\
+Lecture multi-échelle, exploration & CHA + dendrogramme \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\begin{retenirbox}
+Le clustering n'est pas une vérité : c'est une \textbf{hypothèse de travail} que l'analyste fait sur la structure des données. La vraie compétence du data scientist est de choisir --- et de savoir justifier --- pourquoi une méthode est plus adaptée que les autres au problème posé. Nous pouvons également faire une dernière remarque : la méthode des modèles gaussiens a été performante pour détecter des clusters\ldots gaussiens !
+\end{retenirbox}
+
+## Applications concrètes du clustering dans la vie réelle
+
+Le clustering n'est pas un exercice académique sur des données simulées : c'est l'un des outils les plus déployés dans les secteurs publics et privés. Voici un panorama de cas d'usages réels, du commerce à la défense.
+
+\textbf{Commerce et marketing --- la segmentation client.} Les enseignes de la grande distribution (Carrefour, Amazon, Fnac) appliquent quotidiennement le K-means ou les GMM à leurs bases de données d'achats. Chaque client se voit attribuer un segment ("acheteur occasionnel à fort panier", "fidèle low-cost", "early adopter high-tech") qui pilote les campagnes e-mail, les recommandations produits et les programmes de fidélité. Spotify, Apple Music ou Netflix effectuent la même opération sur les comportements d'écoute ou de visionnage pour identifier les "profils d'usage" qui guident les algorithmes de recommandation.
+
+\textbf{Santé et biologie --- la médecine de précision.} En oncologie, les chercheurs appliquent la CHA ou les GMM à des profils d'expression génique de tumeurs pour en identifier les sous-types moléculaires. C'est cette approche qui a conduit à distinguer, par exemple, plusieurs sous-types de cancer du sein (Luminal A, Luminal B, HER2-enrichi, Triple-négatif), chacun répondant différemment aux traitements. En épidémiologie, le clustering géographique de cas permet d'identifier des foyers épidémiques avant même que les alertes officielles ne soient déclenchées.
+
+\textbf{Finance --- la détection de fraude.} Les départements de lutte anti-fraude des banques (BNP Paribas, Société Générale, Visa) utilisent des algorithmes de clustering non supervisé pour détecter les comportements de paiement anormaux. Un cluster de transactions nocturnes à l'étranger avec des montants inhabituels émerge automatiquement --- sans qu'on ait besoin de définir à l'avance ce qu'est une fraude. Le clustering sert également à regrouper les portefeuilles d'investissement selon leurs profils risque/rendement pour optimiser l'allocation d'actifs.
+
+\textbf{Défense et sécurité nationale --- un enjeu croissant.} Dans le domaine de la défense, le clustering trouve des applications directes et stratégiques. L'analyse de signaux électromagnétiques (SIGINT) utilise des algorithmes de partitionnement pour regrouper automatiquement les émissions radio selon leur signature spectrale --- permettant d'identifier des équipements ennemis sans les avoir répertoriés au préalable. La fusion de données ISR (Intelligence, Surveillance, Reconnaissance) applique le clustering spatio-temporel pour détecter des patterns comportementaux anormaux sur un théâtre d'opérations : regroupements inhabituels de véhicules, modifications de routines logistiques, concentration de trafic réseau. Enfin, en cybersécurité de défense, les CERT militaires (comme le CALID en France) utilisent la classification non supervisée de logs systèmes pour isoler automatiquement les comportements malveillants au sein de millions d'événements journaliers --- notamment pour détecter les intrusions persistantes avancées (APT).
+
+\textbf{Image et vision par ordinateur.} La compression d'image JPEG utilise le K-means pour réduire la palette de couleurs d'une image. La segmentation d'images satellitaires --- qu'il s'agisse de cartographier des cultures agricoles ou de surveiller l'évolution du couvert forestier --- repose sur des algorithmes de clustering appliqués aux pixels selon leur signature spectrale (visible, infrarouge, radar).
+
+\begin{retenirbox}
+Dans tous ces domaines, la leçon reste la même : le clustering révèle une structure que les données portent en elles mais que l'analyste n'avait pas définie \textit{a priori}. Sa puissance réside précisément dans cette capacité à faire \textit{émerger} de la connaissance à partir de l'observation brute, sans étiquette préalable.
+\end{retenirbox}
+
+## Pour aller plus loin
+
+- **Flynt et Dean** [-@flynt2016] : la revue des packages R pour le clustering, article de référence de ce document.
+- **Fraley et Raftery** [-@fraley2002] : l'article fondateur de `Mclust` et des mélanges gaussiens.
+- **Everitt et al.** [-@everitt2011] : le livre de référence complet sur le clustering.
+- **Wickham et al.** [-@wickham2019] : l'écosystème `tidyverse`.
+
+\newpage
+
+# Références bibliographiques {.unnumbered}
+
+::: {#refs}
+:::
+
+\newpage
+
+# Rapport de compilation {.unnumbered}
+
+## Méthode de mesure du temps {.unnumbered}
+
+Lorsque vous cliquez sur **Render** dans RStudio, la compilation de ce document traverse
+trois phases successives, dont seule la deuxième est mesurable depuis R :
+
+\begin{center}
+\begin{tabular}{clp{7.5cm}}
+\toprule
+\textbf{Phase} & \textbf{Outil} & \textbf{Ce qui se passe} \\
+\midrule
+\textbf{1 — Quarto/pandoc} & Quarto CLI & Quarto lit le \texttt{.qmd}, prépare l'environnement knitr, et lance R. Cette phase n'est \textbf{pas mesurable} depuis R car R n'a pas encore démarré. Elle dure typiquement 2 à 5 secondes. \\
+\addlinespace
+\textbf{2 — knitr (R)} & knitr + R & Tous les chunks R sont exécutés séquentiellement. \textbf{C'est la seule phase mesurable depuis R.} Un chronomètre global (\texttt{proc.time()}) est lancé au premier chunk \texttt{setup} et arrêté au dernier chunk \texttt{timer-final}. Le total knitr est sauvegardé dans \texttt{compilation\_stats.txt} et \textbf{lu dès la compilation suivante} via une variable globale initialisée dans \texttt{setup} avant l'écrasement du fichier. \\
+\addlinespace
+\textbf{3 — pdflatex} & pdflatex & Pandoc convertit le \texttt{.md} intermédiaire en \texttt{.tex}, puis pdflatex compile le PDF (souvent 2 à 3 passes pour les références, le sommaire et les flottants). Cette phase n'est \textbf{pas mesurable} depuis R car elle se déroule après que knitr a rendu la main. Elle représente souvent 20 à 40\,\% du temps total. \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\begin{attentionbox}
+\textbf{Pourquoi le total des chunks est inférieur au temps total ?} La somme des durées individuelles des chunks représente le \textit{temps CPU pur des calculs R}. Le chronomètre global knitr (Phase 2) est légèrement supérieur car il inclut également le temps de rendu ggplot2 vers fichier image, les appels système et les entrées/sorties disque entre les chunks. Les Phases 1 et 3 (Quarto + pdflatex) s'ajoutent en dehors de toute mesure R et constituent l'\textbf{overhead incompressible} de la compilation.
+\end{attentionbox}
+
+## Environnement système {.unnumbered}
+
+```{r tbl-sysinfo-v7}
+#| label: tbl-sysinfo-v7
+#| echo: false
+#| tbl-cap: "Caractéristiques de la machine de compilation."
+
+sysinfo_tbl <- data.frame(
+  Parametre = c("Plateforme", "Système d'exploitation", "Version R",
+                "Processeur", "Cœurs logiques",
+                "RAM totale (Go)", "Début phase knitr"),
+  Valeur = c(
+    .Platform$OS.type,
+    os_name,
+    R.version.string,
+    cpu_name,
+    as.character(parallel::detectCores()),
+    as.character(ram_go),
+    t_debut_str
+  ),
+  stringsAsFactors = FALSE
+)
+
+kbl(sysinfo_tbl,
+    booktabs  = TRUE,
+    col.names = c("Paramètre", "Valeur"),
+    align     = "ll",
+    linesep   = "") |>
+  kable_styling(
+    latex_options = c("hold_position", "striped"),
+    stripe_color  = "gray!10",
+    font_size     = 9,
+    full_width    = FALSE
+  ) |>
+  column_spec(1, bold = TRUE, width = "5.5cm") |>
+  column_spec(2, width = "8cm")
+```
+
+## Temps d'exécution des chunks R (Phase 2) {.unnumbered}
+
+```{r tbl-timers-v7}
+#| label: tbl-timers-v7
+#| echo: false
+#| tbl-cap: "Durées individuelles des chunks R, triées du plus lent au plus rapide. Les chunks surlignés en orange ont dépassé 5 secondes."
+
+lignes       <- tryCatch(readLines("compilation_stats.txt"), error = function(e) character(0))
+timer_lignes <- lignes[grepl("^\\[TIMER\\]", lignes)]
+
+if (length(timer_lignes) > 0) {
+
+  parsed <- regmatches(timer_lignes,
+    regexec("^\\[TIMER\\]\\s+(.+?)\\s*:\\s+([0-9.]+)\\s+sec$", timer_lignes))
+
+  df_timers <- do.call(rbind, lapply(parsed, function(x) {
+    if (length(x) == 3) data.frame(Chunk = trimws(x[2]),
+                                   Secondes = as.numeric(x[3]),
+                                   stringsAsFactors = FALSE)
+    else NULL
+  }))
+
+  if (!is.null(df_timers) && nrow(df_timers) > 0) {
+    df_timers  <- df_timers[order(-df_timers$Secondes), ]
+    df_timers$Rang     <- seq_len(nrow(df_timers))
+    df_timers$Secondes <- round(df_timers$Secondes, 2)
+    total_chunks       <- sum(df_timers$Secondes)
+
+    # Récupérer durée phase knitr depuis la variable globale initialisée dans setup
+    # (stocke le KNITR_TOTAL de la compilation précédente — toujours disponible dès la 2e compile)
+    duree_knitr_num <- tryCatch(
+      get(".prev_knitr_total", envir = .GlobalEnv),
+      error = function(e) NA_real_
+    )
+    duree_knitr_num <- if (length(duree_knitr_num) == 0L || is.na(duree_knitr_num)) NA_real_ else duree_knitr_num
+
+    note_bas <- if (!is.na(duree_knitr_num)) {
+      sprintf(
+        "Somme chunks R : %.2f sec | Phase knitr globale : %.1f sec | Overhead I/O + rendus : ~%.1f sec",
+        total_chunks, duree_knitr_num, duree_knitr_num - total_chunks
+      )
+    } else {
+      sprintf(
+        "Somme chunks R : %.2f sec | Phase knitr globale : disponible à la 2e compilation",
+        total_chunks
+      )
+    }
+
+    kbl(df_timers[, c("Rang", "Chunk", "Secondes")],
+        booktabs  = TRUE,
+        linesep   = "",
+        row.names = FALSE,
+        col.names = c("Rang", "Chunk R", "Durée (sec)"),
+        align     = c("c", "l", "r")) |>
+      kable_styling(
+        latex_options = c("hold_position", "striped", "scale_down"),
+        stripe_color  = "gray!10",
+        font_size     = 8
+      ) |>
+      column_spec(2, monospace = TRUE) |>
+      column_spec(3, bold = TRUE) |>
+      row_spec(which(df_timers$Secondes >= 5),
+               background = "orange!25") |>
+      footnote(
+        general           = note_bas,
+        general_title     = "",
+        footnote_as_chunk = TRUE,
+        escape            = FALSE
+      )
+  } else {
+    cat("Aucune donnée timer parsée.")
+  }
+} else {
+  cat("Fichier compilation\\_stats.txt absent ou vide — relancez une compilation complète.")
+}
+```
+
+## Bilan global des phases {.unnumbered}
+
+```{r tbl-bilan-phases}
+#| label: tbl-bilan-phases
+#| echo: false
+#| tbl-cap: "Bilan estimé des trois phases de compilation. Les phases 1 et 3 sont estimées par différence ; seule la phase 2 est mesurée."
+
+lignes2 <- tryCatch(readLines("compilation_stats.txt"), error = function(e) character(0))
+
+# Récupérer le KNITR_TOTAL de la compilation précédente (variable globale initialisée dans setup)
+duree_p2 <- tryCatch(
+  get(".prev_knitr_total", envir = .GlobalEnv),
+  error = function(e) NA_real_
+)
+duree_p2 <- if (length(duree_p2) == 0L || is.na(duree_p2)) NA_real_ else duree_p2
+
+# Extraire somme chunks de la compilation EN COURS (fichier déjà partiellement rempli)
+tl2 <- lignes2[grepl("^\\[TIMER\\]", lignes2)]
+parsed2 <- regmatches(tl2,
+  regexec("^\\[TIMER\\]\\s+(.+?)\\s*:\\s+([0-9.]+)\\s+sec$", tl2))
+somme_chunks <- sum(sapply(parsed2, function(x) {
+  if (length(x) == 3L) as.numeric(x[3]) else 0
+}), na.rm = TRUE)
+
+# Overhead I/O — scalaire NA garanti
+overhead_io <- if (!is.na(duree_p2)) round(duree_p2 - somme_chunks, 1) else NA_real_
+
+bilan <- data.frame(
+  Phase  = c("Phase 1 — Quarto / pandoc",
+             "Phase 2a — Exécution chunks R (somme)",
+             "Phase 2b — Overhead knitr (I/O, rendus)",
+             "Phase 2 — Total knitr mesuré",
+             "Phase 3 — pdflatex (2–3 passes LaTeX)"),
+  Mesure = c(
+    "Non mesurable depuis R",
+    sprintf("%.2f sec", somme_chunks),
+    if (!is.na(overhead_io)) sprintf("~%.1f sec", overhead_io) else "disponible à la 2\\textsuperscript{e} compilation",
+    if (!is.na(duree_p2))    sprintf("%.1f sec",  duree_p2)    else "disponible à la 2\\textsuperscript{e} compilation",
+    "Non mesurable depuis R"
+  ),
+  Note   = c(
+    "~2--5 sec estimées",
+    "Mesuré chunk par chunk",
+    "Rendu ggplot2, écriture fichiers",
+    "\\textbf{Seule valeur exacte}",
+    "~20--40\\,\\% du temps total estimé"
+  ),
+  stringsAsFactors = FALSE
+)
+
+kbl(bilan,
+    booktabs  = TRUE,
+    linesep   = "",
+    escape    = FALSE,
+    col.names = c("Phase", "Durée mesurée", "Remarque"),
+    align     = c("l", "r", "l")) |>
+  kable_styling(
+    latex_options = c("hold_position", "striped"),
+    stripe_color  = "gray!10",
+    font_size     = 9
+  ) |>
+  column_spec(1, width = "5.5cm") |>
+  column_spec(2, bold = TRUE, width = "3.5cm") |>
+  column_spec(3, width = "5cm") |>
+  row_spec(4, background = "green!10")
+```
+
+\begin{retenirbox}
+\textbf{Comment fonctionne le timer ?} Au lancement de chaque compilation, le chunk \texttt{setup} lit le fichier \texttt{compilation\_stats.txt} \textit{avant} de l'écraser, et sauvegarde en mémoire le \texttt{[KNITR\_TOTAL]} de la session précédente. Cette valeur est ainsi disponible \textbf{dès la première compilation} qui suit une compilation complète. Les tableaux affichent donc : la somme des chunks R de la compilation \textit{en cours}, et le total knitr de la compilation \textit{précédente} --- ce qui est la seule approche fiable, puisque \texttt{timer-final} écrit ce total \textit{après} que tous les tableaux ont été générés.
+\end{retenirbox}
+
+
+```{r}
+#| label: timer-final
+#| echo: false
+
+t_knitr_end     <- proc.time()
+t_knitr_start_r <- get(".t_knitr_start", envir = .GlobalEnv)
+duree_knitr     <- round((t_knitr_end - t_knitr_start_r)["elapsed"], 1)
+
+write(
+  c(
+    sprintf("[KNITR_END]   %s", format(Sys.time(), "%d/%m/%Y %H:%M:%S")),
+    sprintf("[KNITR_TOTAL] %.1f sec", duree_knitr),
+    sprintf("\nCompilation totale terminée : %s",
+            format(Sys.time(), "%d/%m/%Y %H:%M:%S"))
+  ),
+  file   = "compilation_stats.txt",
+  append = TRUE
+)
+```
+
+
+
+
+
+
+
+
