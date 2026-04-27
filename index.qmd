@@ -8,6 +8,7 @@ lang: fr
 
 format:
   html:
+    self_contained: true
     toc: true
     toc-depth: 3
     toc-title: "Table des matières"
@@ -240,7 +241,7 @@ Les soirées passées sur ces pages, les week-ends confisqués par les algorithm
 
 Vous avez souvent dû vous passer de moi à des moments où un père devrait être présent --- les jeux du soir, les histoires du coucher, les repas en famille que l'écran a parfois remplacés. Vous avez accepté ces absences avec une maturité touchante, et chacun de vos sourires, chacune de vos questions sur "ce que fait papa sur l'ordinateur", m'a redonné l'énergie de continuer. Je vous dois du temps, de la présence, et je m'y engage. Ce document, c'est aussi votre victoire.
 
-À **Monsieur Karim Kiliani**, responsable de l'unité d'enseignement ESD113,
+À **Monsieur Karim KILANI**, responsable de l'unité d'enseignement ESD113,
 
 Rares sont les enseignants qui parviennent à rendre la statistique non seulement accessible, mais véritablement désirable. Votre pédagogie rigoureuse, votre disponibilité et votre souci constant de contextualiser les méthodes ont transformé ce cours en une exploration intellectuelle passionnante. Merci de consacrer votre expertise à des auditeurs comme nous, qui jonglent entre vie professionnelle et ambition académique.
 
@@ -257,7 +258,7 @@ Permettre à un auditeur qui approche la cinquantaine, au cœur d'une vie active
 
 # Introduction générale {#sec-intro-generale}
 
-Ce document a été réalisé dans le cadre de l'unité d'enseignement **ESD113 --- Probabilités et statistiques avec R**, dispensée au Conservatoire National des Arts et Métiers (CNAM) par Monsieur Karim Kiliani.
+Ce document a été réalisé dans le cadre de l'unité d'enseignement **ESD113 --- Probabilités et statistiques avec R**, dispensée au Conservatoire National des Arts et Métiers (CNAM) par Monsieur Karim KILANI.
 
 Un recours significatif aux outils d'intelligence artificielle a permis de résoudre les problématiques complexes de mise en page et de structuration du contenu.
 
@@ -848,14 +849,6 @@ Les tableaux de gains de ce document sont calculés sur le modèle **16 boules t
 :::
 
 <div style="display: flex; gap: 1.5rem; justify-content: center; flex-wrap: wrap; margin: 1.5rem 0;">
-  <figure style="text-align: center; margin: 0;">
-    <img src="IMG_1967.webp"
-         alt="Tableau des gains Keno FDJ — grilles 9 et 10 numéros"
-         style="max-width: 420px; border: 2px solid #a12b4e; border-radius: 6px;" />
-    <figcaption style="font-size: 0.85em; color: #555; margin-top: 0.5rem;">
-      <em>Tableau officiel FDJ — grilles 9 et 10 numéros (version récente)</em>
-    </figcaption>
-  </figure>
   <figure style="text-align: center; margin: 0;">
     <img src="nouveau-rapport-de-gains-keno-2020.webp"
          alt="Tableau complet des gains Keno FDJ 2020 — toutes grilles"
@@ -2038,7 +2031,7 @@ Les trois méthodes sont évaluées sur les mêmes variables continues $(V_1, V_
 
 ## Bilan du parcours : de R aux méthodes non supervisées
 
-Ce document a constitué un voyage pédagogique en trois actes, tous ancrés dans l'unité d'enseignement ESD113 de Monsieur Karim Kiliani.
+Ce document a constitué un voyage pédagogique en trois actes, tous ancrés dans l'unité d'enseignement ESD113 de Monsieur Karim KILANI.
 
 Le **premier acte** nous a conduits des fondements de R et de Quarto jusqu'à la maîtrise du Tidyverse : manipulation de données, statistiques descriptives, visualisation, et pipe natif. Ces outils constituent la grammaire de base de tout travail d'analyse avec R.
 
