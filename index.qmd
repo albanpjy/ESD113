@@ -256,6 +256,15 @@ Permettre à un auditeur qui approche la cinquantaine, au cœur d'une vie active
 
 ---
 
+::: {.callout-tip}
+### 🔗 Accès aux ressources du projet
+Ce rapport fait partie d'un projet complet sur les statistiques et le clustering. Vous pouvez accéder aux différentes versions ici :
+
+* 🌐 **Version Web interactive :** [Publication RPubs](https://rpubs.com/Albanpjy/esd113_complet_html_v7)
+* 💻 **Code source & Projet :** [Dépôt GitHub ESD113](https://albanpjy.github.io/ESD113/)
+* 📄 **Format PDF :** [Télécharger le rapport PDF](https://albanpjy.github.io/ESD113/esd113_complet_plus_16_pdf_posit.pdf)
+:::
+
 # Introduction générale {#sec-intro-generale}
 
 Ce document a été réalisé dans le cadre de l'unité d'enseignement **ESD113 --- Probabilités et statistiques avec R**, dispensée au Conservatoire National des Arts et Métiers (CNAM) par Monsieur Karim KILANI.
