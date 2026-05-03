@@ -262,7 +262,7 @@ Ce rapport fait partie d'un projet complet sur les statistiques et le clustering
 
 * 🌐 **Version Web interactive :** [Publication RPubs](https://rpubs.com/Albanpjy/esd113_complet_html_v7)
 * 💻 **Code source & Projet :** [Dépôt GitHub ESD113](https://albanpjy.github.io/ESD113/)
-* 📄 **Format PDF :** [Télécharger le rapport PDF](https://albanpjy.github.io/ESD113/esd113_complet_plus_16_pdf_posit.pdf)
+* 📄 **Format PDF :** [Télécharger le rapport PDF](https://albanpjy.github.io/ESD113/esd113_complet_plus_17_pdf_posit.pdf)
 :::
 
 # Introduction générale {#sec-intro-generale}
