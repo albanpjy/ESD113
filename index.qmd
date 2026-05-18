@@ -8,9 +8,9 @@ lang: fr
 
 format:
   html:
-    self_contained: true
+    embed-resources: true
     toc: true
-    toc-depth: 3
+    toc-depth: 2
     toc-title: "Table des matières"
     number-sections: true
     smooth-scroll: true
@@ -235,11 +235,11 @@ knitr::opts_chunk$set(timer = TRUE)
 
 À **Rhizlane**, mon épouse.
 
-Les soirées passées sur ces pages, les week-ends confisqués par les algorithmes et les compilations récalcitrantes --- tu les as vécus avec une patience et une générosité qui forcent l'admiration. Tu as tenu la maison, organisé les journées, rassuré les enfants qui demandaient où était papa, et tu l'as fait avec cette force tranquille qui te caractérise. Ce travail t'appartient autant qu'à moi. Merci d'avoir cru, sans jamais fléchir, que ces efforts en valaient la peine.
+Les soirées passées sur ces pages, les week-ends confisqués par les algorithmes et les compilations récalcitrantes : tu les as vécus avec une patience et une générosité qui forcent l'admiration. Tu as tenu le foyer, organisé les journées, rassuré les enfants qui demandaient où était papa, et tu l'as fait avec cette force tranquille qui te caractérise. Ce travail t'appartient autant qu'à moi.
 
 À **mes deux enfants**,
 
-Vous avez souvent dû vous passer de moi à des moments où un père devrait être présent --- les jeux du soir, les histoires du coucher, les repas en famille que l'écran a parfois remplacés. Vous avez accepté ces absences avec une maturité touchante, et chacun de vos sourires, chacune de vos questions sur "ce que fait papa sur l'ordinateur", m'a redonné l'énergie de continuer. Je vous dois du temps, de la présence, et je m'y engage. Ce document, c'est aussi votre victoire.
+Vous avez souvent dû vous passer de moi à des moments où un père devrait être présent : les jeux du soir, les histoires du coucher, les repas en famille que l'écran a parfois remplacés. Vous avez accepté ces absences avec une maturité touchante, et chacun de vos sourires, chacune de vos questions sur "ce que fait papa sur l'ordinateur", m'a redonné l'énergie de continuer. Je vous dois du temps, de la présence, et je m'y engage. Ce document, c'est aussi votre victoire.
 
 À **Monsieur Karim KILANI**, responsable de l'unité d'enseignement ESD113,
 
@@ -247,14 +247,12 @@ Rares sont les enseignants qui parviennent à rendre la statistique non seulemen
 
 Au **CNAM**,
 
-Permettre à un auditeur qui approche la cinquantaine, au cœur d'une vie active intense, de se former aux méthodes quantitatives avancées, à la data science, à R et à Quarto --- c'est un acte de foi dans l'idée que l'éducation n'a pas d'âge et que l'apprentissage tout au long de la vie n'est pas un slogan mais une réalité concrète. Le CNAM incarne cette conviction avec une constance exemplaire depuis plus de deux siècles. Il est difficile d'exprimer combien ce dispositif représente, pour des professionnels comme moi, une chance inestimable de rester dans la course d'un monde qui accélère. Merci d'exister, merci de persévérer, merci d'accueillir ceux que les circuits classiques ne peuvent plus atteindre.
+Permettre à un auditeur qui approche la cinquantaine, au cœur d'une vie active intense, de se former aux méthodes quantitatives avancées, à la data science, à R et à Quarto : c'est un acte de foi dans l'idée que l'éducation n'a pas d'âge et que l'apprentissage tout au long de la vie n'est pas un slogan mais une réalité concrète. Le CNAM incarne cette conviction avec une constance exemplaire depuis plus de deux siècles. Il est difficile d'exprimer combien ce dispositif représente, pour des professionnels comme moi, une chance inestimable de rester dans la course d'un monde qui accélère. Merci d'exister, merci de persévérer, merci d'accueillir ceux que les circuits classiques ne peuvent plus atteindre.
 
 <div style="text-align: right; margin-top: 1.5em; font-style: italic; color: #555;">
 *Alban VIDELOUP*<br>
 *Paris, `r format(Sys.Date(), "%d %B %Y")`*
 </div>
-
----
 
 ::: {.callout-tip}
 ### 🔗 Accès aux ressources du projet
@@ -262,10 +260,11 @@ Ce rapport fait partie d'un projet complet sur les statistiques et le clustering
 
 * 🌐 **Version Web interactive :** [Publication RPubs](https://rpubs.com/Albanpjy/esd113_complet_html_v7)
 * 💻 **Code source & Projet :** [Dépôt GitHub ESD113](https://albanpjy.github.io/ESD113/)
-* 📄 **Format PDF :** [Télécharger le rapport PDF](https://albanpjy.github.io/ESD113/esd113_complet_plus_17_pdf_posit.pdf)
+* 📄 **Format PDF :** [Télécharger le rapport PDF](https://albanpjy.github.io/ESD113/esd113_complet_plus_18_pdf_posit.pdf)
 :::
+---
 
-# Introduction générale {#sec-intro-generale}
+# Introduction générale {.unnumbered #sec-intro-generale}
 
 Ce document a été réalisé dans le cadre de l'unité d'enseignement **ESD113 --- Probabilités et statistiques avec R**, dispensée au Conservatoire National des Arts et Métiers (CNAM) par Monsieur Karim KILANI.
 
@@ -1832,64 +1831,167 @@ La méthode hiérarchique est utile pour explorer la structure des données, mai
 
 ## Modèles de mélanges gaussiens : Mclust
 
-### Du déterministe au probabiliste
-
-Avec K-means et la CHA, chaque individu est assigné à exactement un groupe, sans la moindre nuance. Les **Modèles de Mélanges Gaussiens** (GMM) apportent une vision plus honnête : chaque individu appartient à chaque groupe avec une certaine probabilité. Formellement :
-
-```latex
-$$f(\boldsymbol{x}) = \sum_{k=1}^{K} \pi_k \cdot \mathcal{N}_p(\boldsymbol{x}\,|\,\boldsymbol{\mu}_k, \boldsymbol{\Sigma}_k)$$
-```
-
-$$f(\boldsymbol{x}) = \sum_{k=1}^{K} \pi_k \cdot \mathcal{N}_p(\boldsymbol{x}\,|\,\boldsymbol{\mu}_k, \boldsymbol{\Sigma}_k)$$
-
 ::: {.callout-note}
-## Analogie pédagogique
-Le K-means dit : "Tu es un client premium, point." Le GMM dit : "Tu es probablement un client premium à 75 %, standard à 20 % et VIP à 5 %." C'est nettement plus nuancé et réaliste.
+## Analogie : du déterministe au probabiliste
+Le K-means affecte chaque observation à *un seul* groupe de façon déterministe :
+"Tu appartiens au groupe 2, point final." Le GMM est plus nuancé : "Tu
+appartiens au groupe 2 avec une probabilité de 78 %, au groupe 1 avec 18 %,
+au groupe 3 avec 4 %." Cette **appartenance probabiliste** est à la fois plus
+réaliste et plus informative.
 :::
+
+### Le modèle de mélange gaussien (GMM)
+
+`mclust` ajuste un **modèle de mélange gaussien** (GMM) : on suppose que la
+population est composée de $K$ sous-populations gaussiennes, chacune caractérisée
+par un poids $\pi_k$, un centre $\boldsymbol{\mu}_k$ et une dispersion
+$\boldsymbol{\Sigma}_k$. La densité de mélange s'écrit :
+
+$$f(x_i) = \sum_{k=1}^{K} \pi_k \,
+\mathcal{N}_p(x_i \mid \boldsymbol{\mu}_k, \boldsymbol{\Sigma}_k)$$
+
+avec $\sum_{k=1}^K \pi_k = 1$ et $\pi_k > 0$.
 
 ### L'algorithme EM
 
-Les paramètres $\{\pi_k, \boldsymbol{\mu}_k, \boldsymbol{\Sigma}_k\}_{k=1}^{K}$ sont estimés par l'algorithme EM [@dempster1977] :
+Les paramètres $\Theta = \{\pi_k, \boldsymbol{\mu}_k, \boldsymbol{\Sigma}_k\}_{k=1}^K$ sont
+estimés par maximum de vraisemblance via l'algorithme **EM** (Expectation-Maximisation) [@dempster1977],
+qui alterne deux étapes jusqu'à convergence.
 
-**Étape E (Expectation)** --- calcul des responsabilités $r_{ik}$ :
+**Étape E (Expectation)** — calcul des responsabilités $r_{ik}$ :
 
-```latex
-$$r_{ik} = \frac{\pi_k \cdot \mathcal{N}_p(x_i|\,\boldsymbol{\mu}_k, \boldsymbol{\Sigma}_k)}{\sum_{j=1}^{K} \pi_j \cdot \mathcal{N}_p(x_i|\,\boldsymbol{\mu}_j, \boldsymbol{\Sigma}_j)}$$
-```
+$$r_{ik} = \frac{\pi_k \cdot \mathcal{N}_p(x_i\mid\boldsymbol{\mu}_k, \boldsymbol{\Sigma}_k)}
+{\displaystyle\sum_{j=1}^{K} \pi_j \cdot
+\mathcal{N}_p(x_i\mid\boldsymbol{\mu}_j, \boldsymbol{\Sigma}_j)}$$
 
-$$r_{ik} = \frac{\pi_k \cdot \mathcal{N}_p(x_i|\,\boldsymbol{\mu}_k, \boldsymbol{\Sigma}_k)}{\sum_{j=1}^{K} \pi_j \cdot \mathcal{N}_p(x_i|\,\boldsymbol{\mu}_j, \boldsymbol{\Sigma}_j)}$$
+$r_{ik} \in [0,1]$ est la probabilité *a posteriori* que l'observation $x_i$
+provienne de la composante $k$ (application directe de la règle de Bayes).
+On a $\sum_k r_{ik} = 1$ pour tout $i$ : là où le K-means donne une appartenance
+dure (0 ou 1), le GMM produit un vecteur complet de probabilités (*soft assignment*).
 
-**Étape M (Maximization)** --- mise à jour des paramètres :
+**Étape M (Maximisation)** — mise à jour des paramètres à partir des effectifs pondérés $n_k = \sum_i r_{ik}$ :
 
-```latex
-$$\hat{\pi}_k = \frac{1}{n}\sum_i r_{ik}, \qquad \hat{\boldsymbol{\mu}}_k = \frac{\sum_i r_{ik} x_i}{\sum_i r_{ik}}, \qquad \hat{\boldsymbol{\Sigma}}_k = \frac{\sum_i r_{ik}(x_i - \hat{\boldsymbol{\mu}}_k)(x_i - \hat{\boldsymbol{\mu}}_k)^\top}{\sum_i r_{ik}}$$
-```
+$$\hat{\pi}_k = \frac{n_k}{n}, \qquad
+\hat{\boldsymbol{\mu}}_k = \frac{1}{n_k}\sum_i r_{ik}\, x_i, \qquad
+\hat{\boldsymbol{\Sigma}}_k = \frac{1}{n_k}\sum_i
+r_{ik}(x_i - \hat{\boldsymbol{\mu}}_k)(x_i - \hat{\boldsymbol{\mu}}_k)^\top$$
 
-$$\hat{\pi}_k = \frac{1}{n}\sum_i r_{ik}, \qquad \hat{\boldsymbol{\mu}}_k = \frac{\sum_i r_{ik} x_i}{\sum_i r_{ik}}, \qquad \hat{\boldsymbol{\Sigma}}_k = \frac{\sum_i r_{ik}(x_i - \hat{\boldsymbol{\mu}}_k)(x_i - \hat{\boldsymbol{\mu}}_k)^\top}{\sum_i r_{ik}}$$
+::: {.callout-tip title="À retenir"}
+La log-vraisemblance $\ell(\Theta) = \sum_i \ln f(x_i)$ est **garantie non
+décroissante** à chaque itération EM. L'algorithme s'arrête quand l'incrément
+$|\ell^{(t+1)} - \ell^{(t)}| < \varepsilon$ (défaut : $10^{-5}$ dans `mclust`).
+En pratique, on relance depuis plusieurs initialisations pour éviter les maxima locaux.
+:::
+
+### Les 14 familles de modèles de covariance
+
+La richesse de `mclust` tient à sa paramétrisation par décomposition propre de $\boldsymbol{\Sigma}_k$ :
+
+$$\boldsymbol{\Sigma}_k = \lambda_k \, D_k \, A_k \, D_k^\top$$
+
+$\lambda_k$ contrôle le **volume**, $D_k$ l'**orientation**, $A_k$ la **forme**
+($\det A_k = 1$). En contraignant (E = Égal entre groupes) ou libérant
+(V = Variable) chacune de ces trois composantes, `mclust` définit 14 familles
+de modèles (EII, VII, EEI, EEE, …, VVV).
+
+### La vraisemblance : mesurer l'adéquation du modèle
+
+La **log-vraisemblance** $\ell(\Theta)$ mesure à quel point le modèle ajusté
+"colle" aux données observées :
+
+$$\ell(\Theta) = \sum_{i=1}^{n} \ln\!\left[
+\sum_{k=1}^{K} \pi_k \, \mathcal{N}_p(x_i \mid \boldsymbol{\mu}_k, \boldsymbol{\Sigma}_k)
+\right]$$
+
+::: {.callout-note}
+## Intuition de la vraisemblance
+Imaginez 600 élèves répartis dans 3 classes. La vraisemblance répond à :
+*"Quelle configuration de classes (centres, dispersions, proportions) aurait
+le plus de chances de produire exactement ces 600 élèves ?"* Plus $\ell$ est
+grand (moins négatif), mieux le modèle explique les données. L'algorithme EM
+cherche les paramètres qui maximisent $\ell$.
+
+Chaque terme $\ln[\ldots]$ est négatif (log d'une probabilité $< 1$), donc
+$\ell < 0$ en général. Un modèle avec plus de composantes $K$ ou plus de
+paramètres libres atteint toujours une vraisemblance au moins aussi élevée
+--- d'où la nécessité de la pénalisation du BIC.
+:::
+
+### Les degrés de liberté : le coût de la complexité
+
+Le paramètre $d$ dans la formule du BIC est le **nombre de paramètres libres**
+du modèle. Pour les données de Flynt & Dean ($p = 2$ variables, $K = 3$ groupes) :
+
+| Composante | Formule | Valeur |
+|---|---|---|
+| Proportions $\pi_k$ | $K - 1$ | 2 |
+| Moyennes $\boldsymbol{\mu}_k$ | $K \times p$ | 6 |
+| Covariances (selon modèle) | variable | dépend de la famille |
+
+Un modèle VVV (totalement libre) utilise $p(p+1)/2 = 3$ paramètres par
+matrice de covariance, soit $3 \times 3 = 9$ supplémentaires, pour un total
+de $d = 17$. Des familles plus contraintes (EEE, EVE…) partagent des
+paramètres entre groupes et comptent moins de degrés de liberté.
+
+::: {.callout-tip title="À retenir"}
+Le modèle sélectionné par `mclust` expose son $d$ via `mc_model$df` en R.
+Sur $n = 600$ observations, $\ln(600) \approx 6{,}4$ : chaque paramètre
+supplémentaire coûte environ **6,4 points de BIC**, ce qui rend la
+pénalisation très efficace pour écarter les modèles sur-paramétrés.
+:::
 
 ### Sélection automatique via le BIC
 
-Mclust [@fraley2002; @scrucca2016] sélectionne automatiquement $K$ et la structure de covariance en maximisant le **Critère d'Information Bayésien (BIC)** [@schwarz1978] :
+`mclust` [@fraley2002; @scrucca2016] sélectionne simultanément $K$ et la
+famille de covariance en maximisant le BIC de Fraley-Raftery [@schwarz1978] :
 
-```latex
-$$\text{BIC} = 2\ln\hat{L} - d\ln n$$
-```
+$$\text{BIC} = \underbrace{2\ln\hat{L}}_{\text{ajustement}} -
+\underbrace{d\ln n}_{\text{pénalité complexité}}$$
 
-$$\text{BIC} = 2\ln\hat{L} - d\ln n$$
+::: {.callout-warning}
+**Convention inversée.** Dans la littérature standard, le BIC se *minimise*
+($-2\ln\hat{L} + d\ln n$). Dans `mclust`, il se **maximise** — signe opposé,
+même principe de pénalisation de la complexité. Ne pas confondre les deux
+conventions en comparant des sources différentes.
+:::
 
 ```{r mclust-fit}
 #| label: mclust-fit
 
-mc_model_v2 <- Mclust(X_data[, 1:2], G = 3)
+mc_model_v2 <- Mclust(X_data[, 1:2])
 tab_mc_v2   <- table(Vérité = cl_real, Mclust = mc_model_v2$classification)
-print(tab_mc_v2)
+
+cat("=== Modele optimal selectionne par mclust ===\n")
+cat("Modele de covariance :", mc_model_v2$modelName, "\n")
+cat("Nombre de composantes K :", mc_model_v2$G, "\n")
+cat("Degres de liberte (d) :", mc_model_v2$df, "\n")
+cat("Log-vraisemblance (l) :", round(mc_model_v2$loglik, 2), "\n")
+cat("BIC Fraley-Raftery    :", round(mc_model_v2$bic, 2), "\n")
 
 reussite_mc      <- sum(apply(tab_mc_v2, 1, max))
 taux_reussite_mc <- (reussite_mc / nrow(X_data)) * 100
 taux_erreur_mc   <- 100 - taux_reussite_mc
+```
 
-cat("Taux de réussite Mclust :", round(taux_reussite_mc, 2), "%")
-cat("\nTaux d'erreur Mclust    :", round(taux_erreur_mc, 2), "%")
+```{r tbl-bic-top-html}
+#| label: tbl-bic-top-html
+
+bic_matrix <- mc_model_v2$BIC
+bic_df <- data.frame(
+  K      = as.integer(rep(row.names(bic_matrix), ncol(bic_matrix))),
+  Modele = rep(colnames(bic_matrix), each = nrow(bic_matrix)),
+  BIC    = round(as.vector(bic_matrix), 2)
+)
+bic_df <- bic_df[!is.na(bic_df$BIC), ]
+bic_df <- bic_df[order(-bic_df$BIC), ]
+bic_top5 <- head(bic_df, 5)
+row.names(bic_top5) <- NULL
+
+kable(bic_top5,
+      col.names = c("K", "Modèle", "BIC"),
+      caption   = "Cinq meilleurs modèles selon le BIC de Fraley-Raftery (plus élevé = meilleur).") |>
+  kable_styling(bootstrap_options = c("striped", "hover"), full_width = FALSE) |>
+  row_spec(1, bold = TRUE, color = "white", background = "#003A70")
 ```
 
 ```{r tbl-perf-mclust}
