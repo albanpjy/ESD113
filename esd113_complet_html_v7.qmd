@@ -263,7 +263,7 @@ Permettre à un auditeur qui approche la cinquantaine, au cœur d'une vie active
 
 <div style="text-align: right; margin-top: 1.5em; font-style: italic; color: #555;">
 *Alban VIDELOUP*<br>
-*Paris, `r format(Sys.Date(), "%d %B %Y")`*
+*Paris, `r withr::with_locale(c(LC_TIME = "fr_FR.UTF-8"), format(Sys.Date(), "%d %B %Y"))`*
 </div>
 
 ::: {.callout-tip}
@@ -278,9 +278,7 @@ Ce rapport fait partie d'un projet complet sur les statistiques et le clustering
 
 # Introduction générale {.unnumbered #sec-intro-generale}
 
-Ce document a été réalisé dans le cadre de l'unité d'enseignement *ESD113-Probabilités et statistiques avec R*, dispensée au Conservatoire National des Arts et Métiers (CNAM) par Monsieur Karim KILANI.
-
-Avec plus de soixante-quinze pages de développements théoriques approfondis, de démonstrations mathématiques et de mises en œuvre reproductibles en R, ce document constitue un *rapport de référence méthodologique* — et non un simple aide-mémoire. Chaque concept y est présenté avec la rigueur d'un manuel académique : définitions formelles, preuves ou justifications, implémentation en R et interprétation critique des résultats. Un recours significatif aux outils d'intelligence artificielle a permis de résoudre les problématiques complexes de mise en page et de structuration du contenu.
+Ce document a été réalisé dans le cadre de l'unité d'enseignement *ESD113-Probabilités et statistiques avec R*, dispensée au Conservatoire National des Arts et Métiers (CNAM) par Monsieur Karim KILANI, il constitue un rapport de référence méthodologique. Chaque concept y est présenté avec la rigueur : définitions formelles, justifications, implémentation en R et interprétation critique des résultats. Un recours significatif aux outils d'intelligence artificielle a permis de résoudre les problématiques complexes de mise en page avec précision et rapidité, tout en facilitant la structuration du contenu.contenu.
 
 Ce rapport fusionne trois volets complémentaires du cours :
 
