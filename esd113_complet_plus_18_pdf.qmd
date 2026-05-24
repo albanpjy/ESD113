@@ -7,7 +7,7 @@ date-format: "D MMMM YYYY"
 lang: fr
 abstract-title: "Résumé"
 abstract: |
-  Ce rapport présente une synthèse exhaustive des travaux menés dans le cadre de l'unité d'enseignement ESD113 - Probabilités et statistique avec R, dispensée au Conservatoire National des Arts et Métiers. L'objectif central de ce document est de décrire une chaîne de traitement de données complète, allant de l'acquisition et de la restructuration des données brutes jusqu'à la modélisation statistique et la production de rapports de haute qualité typographique via Quarto et LaTeX. La première partie de l'ouvrage pose les bases de l'écosystème R en s'appuyant sur la philosophie du Tidyverse, illustrant comment des packages tels que dplyr, ggplot2 et tidyr transforment la manipulation des données en une grammaire fluide et reproductible, permettant de passer d'un format large à un format long indispensable à l'analyse moderne. Le cœur du rapport se concentre sur l'analyse approfondie du jeu de tirage Keno de la Française des Jeux, un cas d'étude réel permettant d'éprouver les concepts de variables aléatoires et de lois de probabilité. En utilisant la loi hypergéométrique, nous démontrons mathématiquement que l'espérance de gain est systématiquement défavorable au joueur, avec un Taux de Retour Joueur (TRJ) oscillant entre 50% et 60% selon le type de grille choisie, mettant ainsi en lumière la marge structurelle de l'opérateur. Cette approche théorique est complétée par des simulations de Monte-Carlo d'envergure (plus de 1 000 itérations), validant par l'empirisme les résultats probabilistes et explorant la variabilité des minima d'apparition des numéros sur des séries de tirages historiques réels, ce qui permet de rejeter toute hypothèse de biais dans le hasard du tirage. La dernière phase du document explore les méthodes d'apprentissage non supervisé à travers une étude comparative de trois paradigmes majeurs : le partitionnement géométrique par K-means, la classification hiérarchique ascendante (CHA) et les modèles de mélanges gaussiens (GMM) via le package R Mclust. En s'appuyant sur des données simulées contrôlées reproduisant les travaux de Flynt et Dean (2016), nous mettons en évidence les limites intrinsèques du K-means face à des structures de données elliptiques et corrélées, et démontrons la supériorité des modèles de mélanges gaussiens, capables de capturer fidèlement la géométrie des populations grâce au critère d'information bayésien (BIC) pour le choix du modèle optimal. Ce document constitue ainsi un guide méthodologique pour tout analyste souhaitant allier la puissance de calcul statistique de R à la rigueur de la science reproductible, tout en respectant les standards en matière de présentation, de documentation technique et de restitution visuelle des connaissances.
+  Ce rapport présente une synthèse exhaustive des travaux menés dans le cadre de l'unité d'enseignement ESD113 - Probabilités et statistique avec R, dispensée au Conservatoire National des Arts et Métiers Paris (CNAM). L'objectif central de ce document est de décrire une chaîne de traitement de données complète, allant de l'acquisition et de la restructuration des données brutes jusqu'à la modélisation statistique et la production de rapports de haute qualité typographique via Quarto et LaTeX. La première partie du rapport pose les bases de l'écosystème R en s'appuyant sur la philosophie du Tidyverse, illustrant comment des packages tels que dplyr, ggplot2 et tidyr transforment la manipulation des données en une grammaire fluide et reproductible, permettant de passer d'un format large à un format long indispensable à l'analyse moderne. Le cœur du rapport se concentre sur l'analyse approfondie du jeu de tirage Keno de la Française des Jeux, un cas d'étude réel permettant d'éprouver les concepts de variables aléatoires et de lois de probabilité. En utilisant la loi hypergéométrique, nous démontrons mathématiquement que l'espérance de gain est systématiquement défavorable au joueur, avec un Taux de Retour Joueur (TRJ) oscillant entre 47% et 55% selon le type de grille choisie, mettant ainsi en lumière la marge structurelle de l'opérateur. Cette approche théorique est complétée par des simulations de Monte-Carlo (plus de 1 000 itérations), validant par l'empirisme les résultats probabilistes et explorant la variabilité des minima d'apparition des numéros sur des séries de tirages historiques réels, ce qui permet de rejeter toute hypothèse de biais dans le hasard du tirage. La dernière phase du document explore les méthodes d'apprentissage non supervisé à travers une étude comparative de trois paradigmes majeurs : le partitionnement géométrique par K-means, la classification hiérarchique ascendante (CHA) et les modèles de mélanges gaussiens (GMM) via le package R Mclust. En s'appuyant sur des données simulées contrôlées reproduisant les travaux de Flynt et Dean (2016), nous mettons en évidence les limites intrinsèques du K-means face à des structures de données elliptiques et corrélées, et démontrons la supériorité des modèles de mélanges gaussiens, capables de capturer fidèlement la géométrie des populations grâce au critère d'information bayésien (BIC) pour le choix du modèle optimal. Ce document constitue ainsi un guide méthodologique pour tout analyste souhaitant allier la puissance de calcul statistique de R à la rigueur de la science reproductible, tout en respectant les standards en matière de présentation, de documentation technique et de restitution visuelle des connaissances.
 keywords: [R, Tidyverse, Quarto, Keno, Probabilités, Monte-Carlo, Clustering, K-means, Mclust, Science Reproductible]
 
 format:
@@ -15,7 +15,7 @@ format:
     pdf-engine: pdflatex
     documentclass: article
     toc: true
-    toc-depth: 2
+    toc-depth: 3
     toc-title: "Table des matières"
     lof: true
     lot: true
@@ -504,13 +504,13 @@ Toutes les analyses sont réalisées avec R [@r2024] et Quarto [@quarto2024].
 
 \newpage
 
-# Partie I-Introduction à R, Quarto et Tidyverse {.unnumbered}
+# Partie I-Introduction à R, Quarto et Tidyverse
 
 \newpage
 
-# Initiation à R, Quarto et Markdown {#sec-intro}
+## Initiation à R, Quarto et Markdown {#sec-intro}
 
-## Présentation générale
+### Présentation générale
 
 Ce document est une introduction pratique au langage \textit{R} et à l'environnement de publication \textit{Quarto}. L'objectif est triple :
 
@@ -524,7 +524,7 @@ Ce document est une introduction pratique au langage \textit{R} et à l'environn
 Quarto, c'est comme un cahier de laboratoire numérique : on y écrit ses observations (le texte), on y insère ses protocoles (le code R), et les résultats apparaissent automatiquement à la compilation. Plus besoin de copier-coller les sorties manuellement.
 \end{analogiebox}
 
-## Mise en forme du texte en Markdown
+### Mise en forme du texte en Markdown
 
 Quarto repose sur la syntaxe \textit{Markdown} pour la mise en forme. On peut écrire en \textit{gras} et en \textit{italique}, insérer des listes, des tableaux et des formules mathématiques grâce à \LaTeX{}.
 
@@ -560,7 +560,7 @@ $$f(t) = \int_{-\infty}^{+\infty} \hat{f}(\xi)\, e^{i 2\pi \xi t}\, d\xi$$
 
 où les rôles de $t$ et $\xi$ sont inversés par rapport à la transformée directe : on intègre maintenant sur la variable de fréquence $\xi$, et le signe du noyau exponentiel passe de $-i$ à $+i$ (ce qui assure la réversibilité de l'opération).
 
-## Les chunks de code R
+### Les chunks de code R
 
 Un \textit{chunk} est un bloc de code exécutable intégré au document. Le chunk ci-dessous génère la séquence des entiers de 1 à 20 :
 
@@ -583,15 +583,15 @@ seq(1970, 2026, by = 4)
 La fonction \texttt{seq(de, à, by = pas)} est l'une des plus utiles de R. On peut aussi écrire \texttt{1:20} pour une séquence d'entiers consécutifs --- c'est la notation compacte équivalente à \texttt{seq(1, 20, by = 1)}.
 \end{retenirbox}
 
-## Références bibliographiques dans Quarto
+### Références bibliographiques dans Quarto
 
 Quarto gère nativement les bibliographies via \textit{BibTeX}. Il suffit d'indiquer le fichier \texttt{.bib} dans l'en-tête YAML et de citer avec \texttt{@cle\_bib}. Par exemple, on peut citer l'article fondateur du Tidyverse : @wickham2019.
 
 \newpage
 
-# Le Tidyverse {#sec-tidyverse}
+## Le Tidyverse {#sec-tidyverse}
 
-## Présentation
+### Présentation
 
 Le \textit{Tidyverse} est un écosystème de packages R conçu pour la \textit{data science}. Tous ces packages partagent une même philosophie, une même grammaire et des structures de données communes (les \textit{tibbles}).
 
@@ -601,7 +601,7 @@ Le Tidyverse, c'est comme une boîte à outils bien organisée : chaque outil a 
 
 Parmi les packages les plus utilisés : \texttt{dplyr} (manipulation), \texttt{ggplot2} (visualisation), \texttt{tidyr} (restructuration), \texttt{readr} (importation), \texttt{lubridate} (dates) et \texttt{stringr} (chaînes de caractères).
 
-## Manipulation d'un data frame en R de base
+### Manipulation d'un data frame en R de base
 
 Illustrons la manipulation de données avec \textit{R de base} sur le jeu de données intégré \texttt{mtcars} (32 modèles d'automobiles) :
 
@@ -619,7 +619,7 @@ dfcars[1, ]         # Sélection de la 1ère ligne (toutes les colonnes)
 dfcars[1, 1]        # Valeur unique : 1ère colonne, 1ère ligne
 ```
 
-## Manipulations avec le Tidyverse et le pipe `|>`
+### Manipulations avec le Tidyverse et le pipe `|>`
 
 Le \textit{pipe natif} \texttt{|>} (disponible depuis R 4.1) permet de chaîner les opérations de gauche à droite :
 
@@ -631,7 +631,7 @@ dfcars |> dplyr::select(mpg)       # Sélection par nom
 dfcars |> dplyr::select(7:11)      # Sélection d'une plage de colonnes
 ```
 
-## Statistiques descriptives
+### Statistiques descriptives
 
 La fonction \texttt{summarise()} calcule des statistiques agrégées :
 
@@ -658,9 +658,9 @@ stat_des |>
 
 \newpage
 
-# Introduction à la visualisation avec R {#sec-visu}
+## Introduction à la visualisation avec R {#sec-visu}
 
-## Histogramme de base
+### Histogramme de base
 
 ```{r hist-base}
 #| label: hist-base
@@ -682,7 +682,7 @@ Filtrons les voitures les plus économiques :
 dfcars |> filter(mpg >= 30 & mpg <= 35)
 ```
 
-## Histogramme avec ggplot2
+### Histogramme avec ggplot2
 
 ```{r ggplot-hist}
 #| label: ggplot-hist
@@ -703,24 +703,24 @@ dfcars |>
 La bibliothèque \texttt{ggthemes} (utilisée dans la version HTML) n'est pas indispensable pour la version PDF. Le thème \texttt{theme\_minimal()} est tout à fait adapté aux sorties imprimées.
 \end{attentionbox}
 
-## Exemple de représentation graphique en 3D avec Plotly
+### Exemple de représentation graphique en 3D avec Plotly
 
 
 * **voir version Html :** [albanpjy.github.io/ESD113/](https://albanpjy.github.io/ESD113/)
 
 \newpage
 
-# Partie II-Projet Keno : analyse des données FDJ {.unnumbered}
+# Partie II-Projet Keno : analyse des données FDJ
 
 \newpage
 
-# Projet Keno-Analyse des données FDJ {#sec-keno}
+## Projet Keno-Analyse des données FDJ {#sec-keno}
 
-## Présentation du Keno
+### Présentation du Keno
 
 Le \textit{Keno} est un jeu de tirage proposé par la Française des Jeux (FDJ). À chaque tirage, \textit{16 boules} sont tirées aléatoirement parmi 56, numérotées de 1 à 56. Le joueur coche jusqu'à 10 numéros sur sa grille, et ses gains dépendent du nombre de numéros cochés figurant parmi les 16 boules tirées. Toutes les analyses de ce document portent sur cette version : \textit{16 boules parmi 56}.
 
-## Chargement des données
+### Chargement des données
 
 ```{r load-data}
 #| label: load-data
@@ -741,9 +741,9 @@ keno_202511 <- keno_202511 |> select(-c(1, 19, 20, 21))
 names(keno_202511)
 ```
 
-## Pivot longer : restructuration des données
+### Pivot longer : restructuration des données
 
-### Le concept de pivot
+#### Le concept de pivot
 
 Les données Keno arrivent au format \textit{large} : 1 ligne par tirage, 16 colonnes \texttt{boule1} à \texttt{boule16}. Pour les analyses, on préfère le format \textit{long} : 1 ligne par boule, avec une colonne numéro.
 
@@ -766,7 +766,7 @@ table4a |>
   )
 ```
 
-### Application au Keno
+#### Application au Keno
 
 ```{r pivot-keno}
 #| label: pivot-keno
@@ -786,7 +786,7 @@ keno_longer <- keno_202511 |>
 glimpse(keno_longer)
 ```
 
-## Tableau de fréquence des boules
+### Tableau de fréquence des boules
 
 ```{r freq-boules}
 #| label: freq-boules
@@ -797,7 +797,7 @@ freq_boules <- keno_longer |>
 freq_boules |> filter(frequence == min(frequence))
 ```
 
-## Formatage des dates
+### Formatage des dates
 
 ```{r format-dates}
 #| label: format-dates
@@ -812,7 +812,7 @@ keno_202511 |>
   )
 ```
 
-## Palmarès des numéros-Tableau statistique {#sec-palmares}
+### Palmarès des numéros-Tableau statistique {#sec-palmares}
 
 Ce tableau s'inspire du \textit{palmarès des numéros} du site FDJ. Pour chaque numéro de 1 à 56, on affiche le nombre de sorties, le pourcentage de présence et la date de dernière sortie. La boîte ci-dessous précise la formule de calcul utilisée et fournit la référence théorique permettant d'interpréter correctement les valeurs affichées.
 
@@ -898,7 +898,7 @@ cat("\\bottomrule\n")
 cat("\\end{tabular}\n")
 ```
 
-## Statistiques sur le format long
+### Statistiques sur le format long
 
 ```{r tbl-keno-long}
 #| label: tbl-keno-long
@@ -939,9 +939,9 @@ bind_cols(col1, col2) |>
 
 \newpage
 
-# Visualisations graphiques du Keno {#sec-graphiques}
+## Visualisations graphiques du Keno {#sec-graphiques}
 
-## Histogramme des fréquences
+### Histogramme des fréquences
 
 ```{r barchart-freq}
 #| label: barchart-freq
@@ -966,7 +966,7 @@ freq_boules_plot |>
   theme(legend.position = "right")
 ```
 
-## Graphique circulaire (diagramme en rose)
+### Graphique circulaire (diagramme en rose)
 
 ```{r polar-chart}
 #| label: polar-chart
@@ -1010,9 +1010,9 @@ freq_boules_plot |>
 
 \newpage
 
-# Modélisation probabiliste du Keno {#sec-proba}
+## Modélisation probabiliste du Keno {#sec-proba}
 
-## La loi hypergéométrique
+### La loi hypergéométrique
 
 \begin{SaveVerbatim}{VerbHyperFormula}
 $$P(X = x) = \frac{\binom{K}{x}\binom{N-K}{n-x}}{\binom{N}{n}}$$
@@ -1035,7 +1035,7 @@ $$P(X = x) = \frac{\binom{K}{x}\binom{N-K}{n-x}}{\binom{N}{n}}$$
 
 La fonction R correspondante est \texttt{dhyper(x, m, n, k)}.
 
-## Calcul des probabilités de gain
+### Calcul des probabilités de gain
 
 ```{r tbl-proba-gain}
 #| label: tbl-proba-gain
@@ -1057,7 +1057,7 @@ tibble(
   )
 ```
 
-## Tableau des gains officiels FDJ
+### Tableau des gains officiels FDJ
 
 ```{r tbl-tableau-gains}
 #| label: tbl-tableau-gains
@@ -1088,9 +1088,9 @@ tableau_gains |>
 
 \newpage
 
-# Référence officielle FDJ : tableau complet des gains {#sec-fdj-ref}
+## Référence officielle FDJ : tableau complet des gains {#sec-fdj-ref}
 
-## Les tableaux de gains officiels
+### Les tableaux de gains officiels
 
 ::: {.callout-note appearance="minimal"}
 Les probabilités et gains présentés dans cette section sont calculés à partir des règles officielles
@@ -1124,7 +1124,7 @@ mise de 1\,\euro{}.
 
 \newpage
 
-## Construction de la table complète des gains FDJ {#sec-gains-complet}
+### Construction de la table complète des gains FDJ {#sec-gains-complet}
 
 Nous reproduisons ici le tableau des gains pour *toutes les grilles* (de 2 à 10 numéros
 cochés), en calculant les probabilités théoriques avec `dhyper()` et en renseignant les gains
@@ -1283,7 +1283,7 @@ tbl_obj
 
 \newpage
 
-## Espérances de gain par grille {#sec-esperances-grilles}
+### Espérances de gain par grille {#sec-esperances-grilles}
 
 \begin{SaveVerbatim}{VerbEsperanceGrille}
 $$E_n[G] = \sum_{x \in \mathcal{G}_n} g(x) \cdot p(x)$$
@@ -1401,9 +1401,9 @@ différence constituant la marge opératrice.
 
 \newpage
 
-# Espérance de gain {#sec-esperance}
+## Espérance de gain {#sec-esperance}
 
-## Définition et formule
+### Définition et formule
 
 \begin{SaveVerbatim}{VerbEsperanceSimple}
 $$E[G] = \sum_{x=0}^{10} g(x) \cdot p(x)$$
@@ -1424,7 +1424,7 @@ $$E[G] = \sum_{x=0}^{10} g(x) \cdot p(x)$$
 où $g(x)$ est le gain pour $x$ bonnes boules, et $p(x)$ la probabilité d'en obtenir exactement $x$.
 \end{theorbox}
 
-## Calcul avec R
+### Calcul avec R
 
 ```{r esperance}
 #| label: esperance
@@ -1449,13 +1449,13 @@ L'espérance de gain est inférieure à 1 euro (la mise). Cela signifie que le j
 
 \newpage
 
-# Simulations de Monte-Carlo {#sec-montecarlo}
+## Simulations de Monte-Carlo {#sec-montecarlo}
 
-## Principe
+### Principe
 
 La \textit{simulation de Monte-Carlo} consiste à simuler un grand nombre de tirages aléatoires pour estimer des probabilités ou des distributions. On l'utilise ici pour estimer la probabilité qu'un numéro sorte très peu de fois sur une série de 100 tirages.
 
-## Simulation simple avec une boucle
+### Simulation simple avec une boucle
 
 ```{r montecarlo-simple}
 #| label: montecarlo-simple
@@ -1479,7 +1479,7 @@ numeros_simu <- as.vector(replicate(100, sample(1:56, 16, replace = FALSE)))
 cat("Minimum (replicate) :", table(numeros_simu) |> min())
 ```
 
-## Estimation d'une probabilité
+### Estimation d'une probabilité
 
 On répète l'expérience $N = 100$ fois pour estimer la probabilité qu'un numéro sorte 17 fois ou moins :
 
@@ -1498,7 +1498,7 @@ valmin <- replicate(N, {
 cat("Probabilité estimée P(min <= 17) =", sum(valmin <= 17) / N)
 ```
 
-## Simulation à grande échelle (1 000 itérations)
+### Simulation à grande échelle (1 000 itérations)
 
 ```{r montecarlo-grande-echelle}
 #| label: montecarlo-grande-echelle
@@ -1537,15 +1537,15 @@ La droite de régression (quasiment horizontale) confirme que le processus est \
 
 \newpage
 
-# Partie III-Méthodes de clustering {.unnumbered}
+# Partie III-Méthodes de clustering
 
 \newpage
 
-# Introduction au clustering {#sec-intro-clustering}
+## Introduction au clustering {#sec-intro-clustering}
 
 Ce volet a été réalisé dans le cadre de la même unité d'enseignement \textit{ESD113-Probabilités et statistiques avec R}. L'objectif principal est de reproduire et d'adapter le [code R](https://www.stats.gla.ac.uk/~nd29c/Software/ClusterReviewCode.R) utilisé dans l'article de référence \textit{"A Survey of Popular R Packages for Cluster Analysis"} (Flynt \& Dean, 2016). Ce volet constitue un *guide méthodologique approfondi* des principales méthodes de clustering disponibles en R, articulant développements théoriques rigoureux, mises en œuvre reproductibles et évaluation comparative des performances algorithmiques.
 
-## Qu'est-ce que le clustering ?
+### Qu'est-ce que le clustering ?
 
 Imaginez une carte sur laquelle figurent des centaines de villes représentées par leurs seules coordonnées géographiques (latitude, longitude)-deux \textit{variables quantitatives continues}. La mission : regrouper ces villes en régions \textit{sans connaître à l'avance} les frontières administratives. Naturellement, on mesurerait les distances physiques et on réunirait les villes les plus proches. C'est précisément le principe du K-means : à partir des coordonnées numériques de chaque observation, l'algorithme minimise la \textit{distance euclidienne} entre chaque point et le centre de son groupe (le centroïde, calculé comme la \textit{moyenne géométrique} des coordonnées). C'est pourquoi le K-means exige des variables \textit{quantitatives continues}-tout attribut qualitatif ou catégoriel serait incompatible avec ce calcul de distance.
 
@@ -1558,7 +1558,7 @@ tomate et du parmesan-et créer un « groupe culinaire » reflétant ce comporte
 C'est de la connaissance extraite automatiquement de l'observation brute.
 \end{analogiebox}
 
-## Bref panorama historique
+### Bref panorama historique
 
 Si l'on devait décerner le prix de la "patience algorithmique", Stuart Lloyd serait sans doute sur le podium. Imaginez la scène : nous sommes en \textit{1957}, dans les prestigieux Laboratoires Bell. Entre deux tasses de café noir et des montagnes de tubes à vide, Lloyd pose les bases de ce qui deviendra le moteur de calcul le plus utilisé au monde pour le clustering : l'algorithme de quantification par moindres carrés.
 
@@ -1575,7 +1575,7 @@ Le clustering n'est pas une invention récente. Ses racines plongent profondéme
 - \textit{1977} --- Dempster, Laird et Rubin [-@dempster1977] formalisent l'algorithme \textit{EM}, moteur des modèles de mélanges modernes.
 - \textit{2002} --- Fraley et Raftery [-@fraley2002] publient la référence sur `Mclust`, qui automatise la sélection du modèle.
 
-## Objectifs et plan
+### Objectifs et plan
 
 Ce volet guide pas à pas à travers \textit{trois grandes familles de méthodes}, du plus simple au plus sophistiqué.
 
@@ -1590,9 +1590,9 @@ Le fil conducteur est \textit{unique} : les données simulées de Flynt \& Dean 
 
 \newpage
 
-# Préparation de l'environnement R pour le clustering {#sec-packages-clustering}
+## Préparation de l'environnement R pour le clustering {#sec-packages-clustering}
 
-## Les packages : la boîte à outils
+### Les packages : la boîte à outils
 
 En R, les \textit{packages} sont des bibliothèques développées par la communauté scientifique mondiale. Chaque méthode est implémentée dans un package spécialisé, fruit de travaux de recherche dédiés.
 
@@ -1639,9 +1639,9 @@ conflicts_prefer(dplyr::lag)
 
 \newpage
 
-# Simulation des données : créer un laboratoire contrôlé {#sec-simulation}
+## Simulation des données : créer un laboratoire contrôlé {#sec-simulation}
 
-## Pourquoi simuler ?
+### Pourquoi simuler ?
 
 Évaluer une méthode de clustering sur des données réelles pose un problème fondamental : on ne connaît pas les \textit{vrais} groupes, puisque c'est précisément ce qu'on cherche. La simulation résout ce problème en créant un monde artificiel où \textit{la vérité est connue à l'avance}, ce qui permet de mesurer la qualité de chaque méthode avec précision.
 
@@ -1649,9 +1649,9 @@ conflicts_prefer(dplyr::lag)
 La simulation est le mannequin de crash-test de la statistique : on connaît exactement les forces appliquées, et on mesure comment chaque algorithme s'en sort. C'est le fondement de toute évaluation rigoureuse de méthodes.
 \end{retenirbox}
 
-## Fondements mathématiques : la loi normale multivariée
+### Fondements mathématiques : la loi normale multivariée
 
-### La loi normale univariée
+#### La loi normale univariée
 
 La loi normale (loi de Gauss, 1777--1855) est la distribution de probabilité la plus fondamentale en statistique [@johnson2002]. Sa densité est :
 
@@ -1676,7 +1676,7 @@ Concrètement~:
 Cette notation rigoureuse est essentielle pour interpréter correctement les formules de la loi normale multivariée qui suivent.
 \end{retenirbox}
 
-### La loi normale multivariée
+#### La loi normale multivariée
 
 Pour $p$ variables observées simultanément, on généralise avec la loi normale multivariée $\mathcal{N}_p(\bm{\mu}, \bm{\Sigma})$, de densité :
 
@@ -1691,7 +1691,7 @@ Les paramètres clés sont :
 - $\bm{\mu} = (\mu_1, \ldots, \mu_p)^\top$ : le vecteur de moyennes (centre du nuage de points).
 - $\bm{\Sigma}$ : la matrice de covariance $p \times p$, symétrique définie positive, qui décrit la forme et l'orientation du nuage.
 
-### Le modèle de mélange gaussien
+#### Le modèle de mélange gaussien
 
 Notre jeu de données sera un mélange de $K = 3$ gaussiennes bivariées. La densité totale du mélange est :
 
@@ -1737,9 +1737,9 @@ $$\bm{\Sigma}_{ell} = \begin{pmatrix} 2 & 1.3 \\ 1.3 & 1 \end{pmatrix}$$
 
 Elle traduit une variance plus forte selon $V_1$ et une corrélation positive entre $V_1$ et $V_2$ (covariance = $1.3 > 0$), ce qui crée l'ellipse inclinée à environ 45 degrés.
 
-## Simulation des variables continues
+### Simulation des variables continues
 
-### Vers une lecture plus nette : l'enveloppe convexe
+#### Vers une lecture plus nette : l'enveloppe convexe
 
 Pour obtenir une frontière "physique" nette autour de chaque groupe, nous utilisons le concept d'\textit{enveloppe convexe} (\textit{Convex Hull}). Mathématiquement, l'enveloppe convexe d'un ensemble de points est le plus petit polygone convexe contenant tous ces points.
 
@@ -1747,7 +1747,7 @@ Pour obtenir une frontière "physique" nette autour de chaque groupe, nous utili
 Imaginez que chaque point de notre graphique soit un clou planté sur une planche. L'enveloppe convexe correspond à la forme que prendrait un élastique tendu que l'on relâcherait autour de tous les clous d'une même couleur. L'élastique s'appuierait uniquement sur les points les plus extérieurs, créant une frontière parfaite et sans "creux".
 \end{analogiebox}
 
-### Reproduction des couleurs originales de Flynt & Dean (2016)
+#### Reproduction des couleurs originales de Flynt & Dean (2016)
 
 ```{r fig-simul-donnees}
 #| label: fig-simul-donnees
@@ -1813,11 +1813,11 @@ les ellipses, le capturera bien.
 
 \newpage
 
-# Méthodes de partitionnement géométrique {#sec-partitionnement}
+## Méthodes de partitionnement géométrique {#sec-partitionnement}
 
-## K-means : la méthode des barycentres
+### K-means : la méthode des barycentres
 
-### Principe et intuition
+#### Principe et intuition
 
 Le K-means est l'algorithme de clustering le plus célèbre et le plus utilisé au monde [@macqueen1967; @lloyd1982]. Son principe est d'une simplicité remarquable :
 
@@ -1834,7 +1834,7 @@ On recommence jusqu'à stabilisation.
 C'est exactement l'algorithme K-means.
 \end{analogiebox}
 
-### Formalisation mathématique
+#### Formalisation mathématique
 
 K-means minimise la \textit{somme des distances au carré intra-cluster} (WSS, \textit{Within-Cluster Sum of Squares}) :
 
@@ -1861,7 +1861,7 @@ L'algorithme procède en quatre étapes itératives :
   \item \textbf{Convergence} : répéter les étapes 2--3 jusqu'à stabilisation.
 \end{enumerate}
 
-### Choisir K : la méthode du coude
+#### Choisir K : la méthode du coude
 
 La \textit{méthode du coude} (\textit{elbow method}) calcule la WSS pour plusieurs valeurs de $K$ et identifie le point de rupture au-delà duquel le gain marginal devient négligeable.
 
@@ -1898,7 +1898,7 @@ définitivement a un seul groupe ;
 (4) il ne fonctionne que sur des variables continues.
 \end{attentionbox}
 
-### Formalisation algorithmique du K-means
+#### Formalisation algorithmique du K-means
 
 Avant de comparer les variantes d'implémentation, il est utile de rappeler formellement le fonctionnement interne de l'algorithme K-means, tel que décrit dans Flynt \& Dean (2016).
 
@@ -1953,7 +1953,7 @@ où $\mu_j = \frac{1}{|C_j|} \sum_{x_i \in C_j} x_i$ est le *centroïde* du clus
 \textit{Pourquoi \texttt{nstart = 50} ?} L'algorithme K-means est sensible à l'initialisation : selon les centroïdes tirés au départ, la convergence peut aboutir à un optimum local différent. \texttt{nstart} indique à R de relancer l'algorithme depuis \texttt{nstart} initialisations aléatoires indépendantes et de ne retenir que la meilleure solution (WSS minimale). Flynt \& Dean recommandent une valeur d'au moins 25--50 pour des résultats stables et reproductibles.
 \end{retenirbox}
 
-### Six variations pour générer la courbe WSS
+#### Six variations pour générer la courbe WSS
 
 La méthode du coude peut être implémentée en R de six manières différentes. Ces six variations produisent des courbes WSS statistiquement identiques-toutes indiquent $k = 3$ sur nos données-mais diffèrent par leur lisibilité, leur réutilisabilité et leur expressivité.
 
@@ -2102,9 +2102,9 @@ data.frame(
 Les six courbes WSS produites sont \textit{statistiquement identiques} : toutes indiquent un coude en $k = 3$, confirmant exactement la structure simulée par Flynt \& Dean. Le choix de la variation est donc un choix de \textit{style de code} et de contexte d'usage.
 \end{retenirbox}
 
-## Superposition K-means / vérité terrain
+### Superposition K-means / vérité terrain
 
-### Code R : résultats K-means et des données simulées (les 3 gaussiennes)
+#### Code R : résultats K-means et des données simulées (les 3 gaussiennes)
 
 ```{r fig-kmeans-eval}
 #| label: fig-kmeans-eval
@@ -2143,7 +2143,7 @@ ggplot(X_eval, aes(x = V1, y = V2)) +
   guides(fill = "none")
 ```
 
-### Analyse des résultats : limites géométriques et conflits de modèles
+#### Analyse des résultats : limites géométriques et conflits de modèles
 
 L'examen de la figure de superposition entre les enveloppes convexes du K-means et les points de la vérité terrain permet de dresser un bilan contrasté de la performance de l'algorithme. L'analyse visuelle révèle trois comportements distincts :
 
@@ -2157,7 +2157,7 @@ L'examen de la figure de superposition entre les enveloppes convexes du K-means 
 En conclusion, si le Groupe 1 valide l'efficacité de l'approche dans des conditions simples, les Groupes 2 et 3 démontrent que la propreté visuelle d'un clustering ne garantit pas sa justesse statistique. Le K-means impose sa propre géométrie (sphérique) aux données au lieu de s'adapter à la leur (elliptique).
 \end{attentionbox}
 
-### Analyse de la performance du partitionnement (K=3)
+#### Analyse de la performance du partitionnement (K=3)
 
 ```{r perf-kmeans}
 #| label: perf-kmeans
@@ -2203,9 +2203,9 @@ La performance d'un algorithme de clustering dépend moins de sa complexité inf
 
 \newpage
 
-## Classification hiérarchique ascendante (CHA)
+### Classification hiérarchique ascendante (CHA)
 
-### Principe
+#### Principe
 
 La \textit{classification hiérarchique ascendante} (CHA) construit un \textit{dendrogramme} --- un arbre de fusion représentant quels individus ou groupes ont été réunis, et à quelle distance [@everitt2011]. Elle ne requiert pas de spécifier $K$ à l'avance.
 
@@ -2233,7 +2233,7 @@ ggdendrogram(h_avg, rotate = FALSE, size = 0.15) +
         axis.ticks.x = element_blank())
 ```
 
-### La méthode hiérarchique CAH sur les données simulées
+#### La méthode hiérarchique CAH sur les données simulées
 
 Dans l'article de Flynt \& Dean (2016), la méthode du lien moyen peut s'avérer encore moins performante que le K-means sur ces structures, entraînant un taux d'erreur avoisinant les 30\%. La raison fondamentale : la CAH fusionne des sous-groupes de façon *irréversible* (*greedy*), sans pouvoir réassigner un point mal placé.
 
@@ -2263,7 +2263,7 @@ fviz_dend(res.hc,
   )
 ```
 
-### La version circulaire
+#### La version circulaire
 
 ```{r fig-dendro-circulaire}
 #| label: fig-dendro-circular
@@ -2321,9 +2321,9 @@ La méthode hiérarchique est utile pour explorer la structure des données, mai
 
 \newpage
 
-# Méthodes basées sur les modèles probabilistes {#sec-mclust}
+## Méthodes basées sur les modèles probabilistes {#sec-mclust}
 
-## Modèles de mélanges gaussiens : Mclust
+### Modèles de mélanges gaussiens : Mclust
 
 \begin{analogiebox}
 Le K-means affecte chaque observation à \emph{un seul} groupe de façon
@@ -2333,7 +2333,7 @@ avec 18\%, au groupe 3 avec 4\%." Cette \textit{appartenance probabiliste}
 est à la fois plus réaliste et plus informative.
 \end{analogiebox}
 
-### Le modèle de mélange gaussien (GMM)
+#### Le modèle de mélange gaussien (GMM)
 
 `mclust` ajuste un \textit{modèle de mélange gaussien} (GMM) : on suppose que la
 population est composée de $K$ sous-populations gaussiennes, chacune caractérisée
@@ -2355,7 +2355,7 @@ avec $\sum_{k=1}^K \pi_k = 1$ et $\pi_k > 0$. Pour chaque composante $k$ :
   autour de $\bm{\mu}_k$.
 \end{itemize}
 
-### L'algorithme EM
+#### L'algorithme EM
 
 Les paramètres $\Theta = \{\pi_k, \bm{\mu}_k, \bm{\Sigma}_k\}_{k=1}^K$ sont
 estimés par maximum de vraisemblance via l'algorithme \textit{EM} (Expectation-Maximisation) [@dempster1977], qui alterne deux étapes jusqu'à convergence.
@@ -2389,7 +2389,7 @@ dans \texttt{mclust}). En pratique, on relance depuis plusieurs initialisations
 pour éviter les maxima locaux.
 \end{retenirbox}
 
-### Les 14 familles de modèles de covariance
+#### Les 14 familles de modèles de covariance
 
 La richesse de \texttt{mclust} tient à sa paramétrisation par décomposition
 propre de $\bm{\Sigma}_k$ :
@@ -2401,7 +2401,7 @@ la \textit{forme} ($\det A_k = 1$). En contraignant (E = Égal entre groupes)
 ou libérant (V = Variable) chacune de ces trois composantes, \texttt{mclust}
 définit 14 familles de modèles (EII, VII, EEI, EEE, \ldots, VVV).
 
-### La vraisemblance : mesurer l'adéquation du modèle
+#### La vraisemblance : mesurer l'adéquation du modèle
 
 La \textit{log-vraisemblance} $\ell(\Theta)$ mesure à quel point le modèle
 ajusté "colle" aux données observées :
@@ -2425,7 +2425,7 @@ donc $\ell < 0$ en général. On cherche à le \textit{maximiser}, c'est-à-dire
 $K$ ou plus de paramètres libres atteint toujours une vraisemblance au moins
 aussi élevée-d'où la nécessité de la pénalisation du BIC.
 
-### Les degrés de liberté : le coût de la complexité
+#### Les degrés de liberté : le coût de la complexité
 
 Le paramètre $d$ dans la formule du BIC est le \textit{nombre de paramètres
 libres} du modèle. Il quantifie la complexité : plus un modèle a de paramètres,
@@ -2455,7 +2455,7 @@ supplémentaire coûte environ \textit{6,4 points de BIC}, ce qui rend la
 pénalisation très efficace pour écarter les modèles sur-paramétrés.
 \end{retenirbox}
 
-### Sélection automatique via le BIC
+#### Sélection automatique via le BIC
 
 \texttt{mclust} [@fraley2002; @scrucca2016] sélectionne simultanément $K$
 et la famille de covariance en maximisant le BIC de Fraley-Raftery [@schwarz1978] :
@@ -2654,9 +2654,9 @@ $$T_{erreur} = 1 - 0{,}9867 = 0{,}0133 = \frac{8}{600} \approx 1{,}33\,\%$$
 \newpage
 
 
-# Comparaison et synthèse des méthodes {#sec-comparaison}
+## Comparaison et synthèse des méthodes {#sec-comparaison}
 
-## Tableau comparatif des performances
+### Tableau comparatif des performances
 
 ```{r tbl-comparaison-methodes}
 #| label: tbl-comparaison-methodes
