@@ -1,0 +1,77 @@
+========================================
+  RAPPORT DE COMPILATION — ESD113 (Typst)
+========================================
+Plateforme           unix
+OS                   Ubuntu 24.04.4 LTS
+Version R            R version 4.5.3 (2026-03-11)
+Processeur           AMD EPYC 7R13 Processor
+Coeurs logiques      16
+RAM totale (Go)      132.2
+Début phase knitr   03/05/2026 07:39:52
+[KNITR_START] 03/05/2026 07:39:52
+========================================
+TEMPS PAR CHUNK :
+[TIMER] seq-entiers                         : 0.06 sec
+[TIMER] seq-cdm                             : 0.00 sec
+[TIMER] base-r                              : 0.01 sec
+[TIMER] tidyverse-select                    : 0.02 sec
+[TIMER] stats-desc                          : 0.05 sec
+[TIMER] hist-base                           : 0.07 sec
+[TIMER] filter-mpg                          : 0.01 sec
+[TIMER] ggplot-hist                         : 0.32 sec
+[TIMER] load-data                           : 0.15 sec
+[TIMER] pivot-exemple                       : 0.07 sec
+[TIMER] pivot-keno                          : 0.01 sec
+[TIMER] freq-boules                         : 0.17 sec
+[TIMER] format-dates                        : 0.02 sec
+[TIMER] palmares-fdj                        : 0.25 sec
+[TIMER] keno-long                           : 0.05 sec
+[TIMER] barchart-freq                       : 0.22 sec
+[TIMER] polar-chart                         : 0.18 sec
+[TIMER] proba-gain                          : 0.03 sec
+[TIMER] tableau-gains                       : 0.04 sec
+[TIMER] gains-data                          : 0.01 sec
+[TIMER] gains-calcul-long                   : 0.06 sec
+[TIMER] gains-tableau-10                    : 0.04 sec
+[TIMER] gains-tableau-complet               : 0.07 sec
+[TIMER] esperances-grilles                  : 0.04 sec
+[TIMER] plot-esperances                     : 0.26 sec
+[TIMER] esperance                           : 0.02 sec
+[TIMER] montecarlo-simple                   : 0.01 sec
+[TIMER] montecarlo-replicate                : 0.01 sec
+[TIMER] montecarlo-proba                    : 0.10 sec
+[TIMER] montecarlo-grande-echelle           : 1.83 sec
+[TIMER] packages-clustering                 : 0.62 sec
+[TIMER] tbl-params-simulation               : 0.04 sec
+[TIMER] fig-simul-donnees                   : 0.70 sec
+[TIMER] fig-elbow                           : 0.26 sec
+[TIMER] var1-manuelle                       : 0.21 sec
+[TIMER] var2-for                            : 0.22 sec
+[TIMER] var3-sapply                         : 0.20 sec
+[TIMER] var4-purrr                          : 0.22 sec
+[TIMER] var5-broom                          : 0.22 sec
+[TIMER] var6-factoextra                     : 0.47 sec
+[TIMER] tbl-synthese-variations             : 0.02 sec
+[TIMER] fig-kmeans-eval                     : 0.29 sec
+[TIMER] perf-kmeans                         : 0.02 sec
+[TIMER] tbl-perf-kmeans                     : 0.02 sec
+[TIMER] fig-dendro-simple                   : 0.40 sec
+[TIMER] fig-dendro-color                    : 33.35 sec
+[TIMER] fig-dendro-circular                 : 14.36 sec
+[TIMER] calcul-cah                          : 0.01 sec
+[TIMER] mclust-fit                          : 0.13 sec
+[TIMER] tbl-perf-mclust                     : 0.02 sec
+[TIMER] fig-mclust-hull-v2                  : 0.42 sec
+[TIMER] fig-mclust-bic-fviz-v2              : 1.88 sec
+[TIMER] fig-mclust-classif-v2               : 0.38 sec
+[TIMER] fig-mclust-ellipses-v2              : 0.21 sec
+[TIMER] fig-mclust-uncertainty-v2           : 0.17 sec
+[TIMER] tbl-comparaison-methodes            : 0.16 sec
+[TIMER] tbl-sysinfo-typst                   : 0.03 sec
+[TIMER] tbl-timers-typst                    : 0.10 sec
+[TIMER] tbl-bilan-typst                     : 0.04 sec
+[KNITR_END]   03/05/2026 07:40:52
+[KNITR_TOTAL] 59.9 sec
+
+Compilation totale terminee : 03/05/2026 07:40:52
+[TIMER] timer-final-typst                   : 0.01 sec
