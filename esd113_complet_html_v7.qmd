@@ -413,6 +413,8 @@ Parmi les packages les plus utilisés :
 
 ### Manipulation d'un data frame en R de base
 
+Le jeu de données intégré `mtcars` (32 modèles d'automobiles, 11 variables) illustre les opérations d'indexation fondamentales en R : accès par nom de colonne avec `$`, sélection par indices `[ligne, colonne]`, extraction d'une ligne entière ou d'une cellule individuelle. Ces quatre notations couvrent l'essentiel des besoins d'exploration d'un tableau en R de base, sans nécessiter de package Tidyverse.
+
 ```{r base-r}
 #| label: base-r
 
@@ -443,6 +445,8 @@ dfcars |> dplyr::select(7:11)           # Sélection des colonnes 7 à 11 (plage
 
 ### Statistiques descriptives avec le Tidyverse
 
+La fonction `summarise()` de `dplyr` calcule des statistiques agrégées sur une ou plusieurs colonnes. Combinée au pipe `|>`, elle permet d'enchaîner sélection et résumé en une expression concise et lisible. Le tableau ci-dessous présente quatre indicateurs clés pour la variable `mpg` (consommation en miles par gallon) du jeu `mtcars`.
+
 ```{r stats-desc}
 #| label: stats-desc
 
@@ -465,6 +469,8 @@ stat_des |>
 ## Introduction à la visualisation avec R {#sec-visu}
 
 ### Histogramme de base (R natif)
+
+La fonction `hist()` de R de base produit un histogramme en une seule ligne de code. Elle accepte directement un vecteur numérique et offre les paramètres `main` (titre), `xlab` (axe des abscisses) et `col` (couleur des barres) pour personnaliser le rendu sans charger de bibliothèque supplémentaire.
 
 ```{r hist-base}
 #| label: hist-base
@@ -505,6 +511,13 @@ En version HTML, le thème ggplot2 est configuré globalement dans le chunk `set
 :::
 
 ### Exemple de représentation graphique en 3D avec Plotly
+
+La bibliothèque `plotly` permet de créer des graphiques interactifs directement dans le navigateur, sans plugin. L'exemple ci-dessous construit un *histogramme 3D* à partir de 500 points tirés selon une loi normale bivariée $\mathcal{N}(0, I_2)$ : le plan $(x, y)$ est découpé en une grille $11 \times 11$, et chaque cellule est représentée par une barre 3D dont la hauteur correspond à l'effectif observé. La fonction auxiliaire `add_3Dbar()` construit chaque barre comme un prisme solide (`mesh3d`) défini par ses 8 sommets. Le graphique obtenu est *rotatif*, *zoomable* et *survol-actif* (infobulles au passage de la souris) — des fonctionnalités uniquement disponibles dans la version HTML du document.
+
+::: {.callout-note}
+### Version PDF
+Cette visualisation interactive n'est pas disponible dans la version PDF. Consulter la version HTML publiée sur [albanpjy.github.io/ESD113/](https://albanpjy.github.io/ESD113/) pour interagir avec le graphique.
+:::
 
 ```{r plotly-3D}
 #| label: plotly-3D
@@ -1552,6 +1565,17 @@ $$\mathrm{WSS} = \sum_{k=1}^{K} \sum_{\boldsymbol{x}_{i} \in C_{k}} \lVert \bold
 
 $$\mathrm{WSS} = \sum_{k=1}^{K} \sum_{\boldsymbol{x}_{i} \in C_{k}} \lVert \boldsymbol{x}_{i} - \boldsymbol{\mu}_{k} \rVert^{2}$$
 
+L'algorithme procède en quatre étapes itératives :
+
+1. **Initialisation** : placer $K$ centroïdes au hasard dans l'espace des données.
+2. **Attribution** : affecter chaque observation au centroïde le plus proche — $d(\boldsymbol{x}, \boldsymbol{\mu}_k) = \lVert \boldsymbol{x} - \boldsymbol{\mu}_k \rVert$.
+3. **Mise à jour** : recalculer chaque centroïde comme la moyenne arithmétique de son groupe.
+4. **Convergence** : répéter les étapes 2–3 jusqu'à ce qu'aucune observation ne change de groupe.
+
+La figure ci-dessous, extraite de @lebart1995, illustre graphiquement ces quatre étapes pour $K = 2$ groupes. On y observe, de haut en bas : le tirage aléatoire des deux centres initiaux ($C_1^0$ et $C_2^0$) ; la constitution des deux premières classes ($I_1^0$ et $I_2^0$) délimitées par la frontière médiane perpendiculaire au segment joignant les deux centres ; le déplacement des barycentres ($C_1^1$, $C_2^1$) vers le centre de masse de chaque classe ; puis la convergence vers une partition finale stable ($I_1^2$, $I_2^2$). La frontière de séparation (trait oblique) se déplace à chaque itération jusqu'à ce que les classes ne changent plus.
+
+![Illustration de l'algorithme K-means ($K = 2$) en quatre étapes successives : initialisation aléatoire des centres ($C_1^0$, $C_2^0$), formation des classes ($I_1^0$, $I_2^0$), recalcul des barycentres et convergence vers la partition finale. *Source : @lebart1995.*](dessin_algo_kmeans.png){#fig-kmeans-algo fig-align="center" width="70%"}
+
 #### Choisir K : la méthode du coude
 
 ```{r fig-elbow}
@@ -2220,7 +2244,7 @@ data.frame(
 
 ::: {.callout-note}
 ### Lecture du tableau
-Les trois méthodes sont évaluées sur les mêmes variables continues $(V_1, V_2)$ et la même vérité terrain, ce qui rend les ARI directement comparables. Mclust domine grâce à sa modélisation elliptique, tandis que la CHA souffre de ses fusions irréversibles (30% d'erreur).
+Les trois méthodes sont évaluées sur les mêmes variables continues $(V_1, V_2)$ et la même vérité terrain, ce qui rend les ARI directement comparables. Mclust domine grâce à sa modélisation elliptique, tandis que la CHA souffre de ses fusions irréversibles (30% d'erreur). Pour une présentation complète des mesures de qualité des partitions — indice de Rand ajusté, silhouette, indice de Calinski-Harabasz, V de Cramer et information mutuelle — on se reportera à @rakotomalala2024.
 :::
 
 ---
@@ -2270,7 +2294,7 @@ Le clustering n'est pas une vérité : c'est une *hypothèse de travail* que l'a
 
 Le clustering n'est pas un exercice académique sur des données simulées : c'est l'un des outils les plus déployés dans les secteurs publics et privés.
 
-*Commerce et marketing — la segmentation client.* Les enseignes de la grande distribution (Carrefour, Amazon, Fnac) appliquent quotidiennement le K-means ou les GMM à leurs bases de données d'achats. Chaque client se voit attribuer un segment qui pilote les campagnes e-mail, les recommandations produits et les programmes de fidélité. Spotify, Apple Music ou Netflix effectuent la même opération sur les comportements d'écoute ou de visionnage.
+*Commerce et marketing — la segmentation client.* Les enseignes de la grande distribution (Carrefour, Amazon, Fnac) appliquent quotidiennement le K-means ou les GMM à leurs bases de données d'achats. Chaque client se voit attribuer un segment qui pilote les campagnes e-mail, les recommandations produits et les programmes de fidélité. Spotify, Apple Music ou Netflix effectuent la même opération sur les comportements d'écoute ou de visionnage. Une illustration concrète de cette démarche, appliquée à la segmentation client par Data Mining et une variante améliorée du K-means, est présentée dans @joti2022.
 
 *Santé et biologie — la médecine de précision.* En oncologie, les chercheurs appliquent la CHA ou les GMM à des profils d'expression génique de tumeurs pour en identifier les sous-types moléculaires. C'est cette approche qui a conduit à distinguer plusieurs sous-types de cancer du sein (Luminal A, Luminal B, HER2-enrichi, Triple-négatif), chacun répondant différemment aux traitements.
 

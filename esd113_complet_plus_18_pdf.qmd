@@ -662,6 +662,8 @@ stat_des |>
 
 ### Histogramme de base
 
+La fonction \texttt{hist()} de R de base produit un histogramme en une seule instruction. Elle accepte directement un vecteur numérique et offre les paramètres classiques \texttt{main}, \texttt{xlab} et \texttt{col} pour personnaliser le titre, l'axe et la couleur des barres, sans nécessiter de package supplémentaire.
+
 ```{r hist-base}
 #| label: hist-base
 #| fig.cap: "Histogramme de la consommation des 32 véhicules (R de base)"
@@ -683,6 +685,8 @@ dfcars |> filter(mpg >= 30 & mpg <= 35)
 ```
 
 ### Histogramme avec ggplot2
+
+\texttt{ggplot2} propose une grammaire graphique déclarative : on décrit les \textit{aesthetics} (\texttt{aes}), les \textit{geoms} et les libellés (\texttt{labs}) de façon modulaire. Ce chunk reproduit le même histogramme que la fonction \texttt{hist()}, en ajoutant un titre, un sous-titre et un contrôle fin des couleurs via \texttt{geom\_histogram()}.
 
 ```{r ggplot-hist}
 #| label: ggplot-hist
@@ -1861,6 +1865,12 @@ L'algorithme procède en quatre étapes itératives :
   \item \textbf{Convergence} : répéter les étapes 2--3 jusqu'à stabilisation.
 \end{enumerate}
 
+\vspace{0.5em}
+
+La @fig-kmeans-algo, extraite de @lebart1995, illustre graphiquement ces quatre étapes pour $K = 2$ groupes. On y observe, de haut en bas : le tirage aléatoire des deux centres initiaux ($C_1^0$ et $C_2^0$) ; la constitution des deux premières classes ($I_1^0$ et $I_2^0$) délimitées par la frontière médiane perpendiculaire au segment joignant les deux centres ; le déplacement des barycentres ($C_1^1$, $C_2^1$) vers le centre de masse de chaque classe ; puis la convergence vers une partition stable ($I_1^2$, $I_2^2$) après une nouvelle itération. La frontière de Voronoï se déplace à chaque étape jusqu'à ce qu'aucune réassignation ne soit nécessaire.
+
+![Illustration de l'algorithme K-means ($K = 2$) en quatre étapes successives : initialisation aléatoire des centres ($C_1^0$, $C_2^0$), formation des classes ($I_1^0$, $I_2^0$), recalcul des barycentres et convergence vers la partition finale. Source : @lebart1995.](dessin_algo_kmeans.png){#fig-kmeans-algo width="72%" fig-pos="H"}
+
 #### Choisir K : la méthode du coude
 
 La \textit{méthode du coude} (\textit{elbow method}) calcule la WSS pour plusieurs valeurs de $K$ et identifie le point de rupture au-delà duquel le gain marginal devient négligeable.
@@ -2700,7 +2710,7 @@ kbl(tbl_comp,
 ```
 
 \begin{retenirbox}
-\textit{Lecture du tableau :} Les trois méthodes sont évaluées sur les mêmes variables continues $(V_1, V_2)$ et la même vérité terrain, ce qui rend les ARI directement comparables. Mclust domine grâce à sa modélisation elliptique, tandis que la CHA souffre de ses fusions irréversibles (30\,\% d'erreur).
+\textit{Lecture du tableau :} Les trois méthodes sont évaluées sur les mêmes variables continues $(V_1, V_2)$ et la même vérité terrain, ce qui rend les ARI directement comparables. Mclust domine grâce à sa modélisation elliptique, tandis que la CHA souffre de ses fusions irréversibles (30\,\% d'erreur). Pour une présentation complète des mesures de qualité des partitions (indice de Rand ajusté, silhouette, indice de Calinski-Harabasz, V de Cramer, information mutuelle), on se reportera à @rakotomalala2024.
 \end{retenirbox}
 
 \newpage
@@ -2763,7 +2773,7 @@ Le clustering n'est pas une vérité : c'est une \textit{hypothèse de travail} 
 
 Le clustering n'est pas un exercice académique sur des données simulées : c'est l'un des outils les plus déployés dans les secteurs publics et privés. Voici un panorama de cas d'usages réels, du commerce à la défense.
 
-\textit{Commerce et marketing — la segmentation client.} Les enseignes de la grande distribution (Carrefour, Amazon, Fnac) appliquent quotidiennement le K-means ou les GMM à leurs bases de données d'achats. Chaque client se voit attribuer un segment ("acheteur occasionnel à fort panier", "fidèle low-cost", "early adopter high-tech") qui pilote les campagnes e-mail, les recommandations produits et les programmes de fidélité. Spotify, Apple Music ou Netflix effectuent la même opération sur les comportements d'écoute ou de visionnage pour identifier les "profils d'usage" qui guident les algorithmes de recommandation.
+\textit{Commerce et marketing — la segmentation client.} Les enseignes de la grande distribution (Carrefour, Amazon, Fnac) appliquent quotidiennement le K-means ou les GMM à leurs bases de données d'achats. Chaque client se voit attribuer un segment ("acheteur occasionnel à fort panier", "fidèle low-cost", "early adopter high-tech") qui pilote les campagnes e-mail, les recommandations produits et les programmes de fidélité. Spotify, Apple Music ou Netflix effectuent la même opération sur les comportements d'écoute ou de visionnage pour identifier les "profils d'usage" qui guident les algorithmes de recommandation. Une illustration concrète de cette démarche, appliquée à la segmentation client par Data Mining et une variante améliorée du K-means, est présentée dans @joti2022.
 
 \textit{Santé et biologie — la médecine de précision.} En oncologie, les chercheurs appliquent la CHA ou les GMM à des profils d'expression génique de tumeurs pour en identifier les sous-types moléculaires. C'est cette approche qui a conduit à distinguer, par exemple, plusieurs sous-types de cancer du sein (Luminal A, Luminal B, HER2-enrichi, Triple-négatif), chacun répondant différemment aux traitements. En épidémiologie, le clustering géographique de cas permet d'identifier des foyers épidémiques avant même que les alertes officielles ne soient déclenchées.
 
