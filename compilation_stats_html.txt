@@ -7,73 +7,73 @@ Version R            R version 4.6.0 (2026-04-24)
 Processeur           AMD EPYC 7R13 Processor
 Coeurs logiques      16
 RAM totale (Go)      132.2
-Début phase knitr   31/05/2026 21:43:32
-[KNITR_START] 31/05/2026 21:43:32
+Début phase knitr   10/06/2026 10:20:58
+[KNITR_START] 10/06/2026 10:20:58
 ========================================
 TEMPS PAR CHUNK :
 [TIMER] seq-entiers                         : 0.06 sec
-[TIMER] seq-cdm                             : 0.01 sec
+[TIMER] seq-cdm                             : 0.00 sec
 [TIMER] base-r                              : 0.02 sec
-[TIMER] tidyverse-select                    : 0.08 sec
-[TIMER] stats-desc                          : 0.02 sec
-[TIMER] hist-base                           : 0.12 sec
+[TIMER] tidyverse-select                    : 0.07 sec
+[TIMER] stats-desc                          : 0.03 sec
+[TIMER] hist-base                           : 0.16 sec
 [TIMER] filter-mpg                          : 0.01 sec
-[TIMER] ggplot-hist                         : 0.34 sec
-[TIMER] plotly-3D                           : 0.92 sec
-[TIMER] load-data                           : 0.15 sec
-[TIMER] pivot-exemple                       : 0.02 sec
-[TIMER] pivot-keno                          : 0.01 sec
-[TIMER] freq-boules                         : 0.01 sec
+[TIMER] ggplot-hist                         : 0.40 sec
+[TIMER] plotly-3D                           : 1.29 sec
+[TIMER] load-data                           : 0.42 sec
+[TIMER] pivot-exemple                       : 0.04 sec
+[TIMER] pivot-keno                          : 0.02 sec
+[TIMER] freq-boules                         : 0.02 sec
 [TIMER] format-dates                        : 0.01 sec
-[TIMER] palmares-fdj                        : 0.08 sec
-[TIMER] keno-long                           : 0.05 sec
-[TIMER] barchart-freq                       : 0.27 sec
+[TIMER] palmares-fdj                        : 0.09 sec
+[TIMER] keno-long                           : 0.11 sec
+[TIMER] barchart-freq                       : 0.26 sec
 [TIMER] polar-chart                         : 0.28 sec
 [TIMER] proba-gain                          : 0.01 sec
 [TIMER] tableau-gains                       : 0.02 sec
 [TIMER] gains-data                          : 0.01 sec
-[TIMER] gains-calcul-long                   : 0.07 sec
+[TIMER] gains-calcul-long                   : 0.06 sec
 [TIMER] gains-tableau-10                    : 0.02 sec
-[TIMER] gains-tableau-complet               : 0.05 sec
+[TIMER] gains-tableau-complet               : 0.06 sec
 [TIMER] esperances-grilles                  : 0.03 sec
-[TIMER] plot-esperances                     : 0.32 sec
-[TIMER] esperance                           : 0.01 sec
-[TIMER] montecarlo-simple                   : 0.01 sec
+[TIMER] plot-esperances                     : 0.40 sec
+[TIMER] esperance                           : 0.02 sec
+[TIMER] montecarlo-simple                   : 0.02 sec
 [TIMER] montecarlo-replicate                : 0.01 sec
-[TIMER] montecarlo-proba                    : 0.09 sec
-[TIMER] montecarlo-grande-echelle           : 2.05 sec
-[TIMER] packages-clustering                 : 0.47 sec
+[TIMER] montecarlo-proba                    : 0.15 sec
+[TIMER] montecarlo-grande-echelle           : 2.70 sec
+[TIMER] packages-clustering                 : 0.55 sec
 [TIMER] tbl-params-simulation               : 0.01 sec
-[TIMER] fig-simul-donnees                   : 0.71 sec
-[TIMER] fig-elbow                           : 0.37 sec
-[TIMER] var1-manuelle                       : 0.26 sec
-[TIMER] var2-for                            : 0.25 sec
-[TIMER] var3-sapply                         : 0.25 sec
-[TIMER] var4-purrr                          : 0.25 sec
-[TIMER] var5-broom                          : 0.26 sec
-[TIMER] var6-factoextra                     : 0.49 sec
+[TIMER] fig-simul-donnees                   : 0.90 sec
+[TIMER] fig-elbow                           : 0.33 sec
+[TIMER] var1-manuelle                       : 0.28 sec
+[TIMER] var2-for                            : 0.27 sec
+[TIMER] var3-sapply                         : 0.26 sec
+[TIMER] var4-purrr                          : 0.29 sec
+[TIMER] var5-broom                          : 0.28 sec
+[TIMER] var6-factoextra                     : 0.73 sec
 [TIMER] tbl-synthese-variations             : 0.01 sec
-[TIMER] fig-kmeans-eval                     : 0.34 sec
+[TIMER] fig-kmeans-eval                     : 0.39 sec
 [TIMER] perf-kmeans                         : 0.02 sec
 [TIMER] tbl-perf-kmeans                     : 0.01 sec
-[TIMER] fig-dendro-simple                   : 0.43 sec
-[TIMER] fig-dendro-color                    : 32.98 sec
-[TIMER] fig-dendro-circular                 : 13.63 sec
+[TIMER] fig-dendro-simple                   : 0.50 sec
+[TIMER] fig-dendro-color                    : 35.46 sec
+[TIMER] fig-dendro-circular                 : 14.72 sec
 [TIMER] calcul-cah                          : 0.01 sec
-[TIMER] mclust-fit                          : 1.52 sec
+[TIMER] mclust-fit                          : 1.49 sec
 [TIMER] tbl-bic-top-html                    : 0.02 sec
 [TIMER] tbl-perf-mclust                     : 0.01 sec
-[TIMER] fig-mclust-hull-v2                  : 0.51 sec
-[TIMER] fig-mclust-bic-fviz-v2              : 1.93 sec
-[TIMER] fig-mclust-classif-v2               : 0.48 sec
-[TIMER] fig-mclust-ellipses-v2              : 0.28 sec
-[TIMER] fig-mclust-uncertainty-v2           : 0.27 sec
+[TIMER] fig-mclust-hull-v2                  : 0.47 sec
+[TIMER] fig-mclust-bic-fviz-v2              : 2.00 sec
+[TIMER] fig-mclust-classif-v2               : 0.46 sec
+[TIMER] fig-mclust-ellipses-v2              : 0.26 sec
+[TIMER] fig-mclust-uncertainty-v2           : 0.24 sec
 [TIMER] tbl-comparaison-methodes            : 0.15 sec
 [TIMER] tbl-sysinfo-html                    : 0.02 sec
-[TIMER] tbl-timers-html                     : 0.05 sec
+[TIMER] tbl-timers-html                     : 0.08 sec
 [TIMER] tbl-bilan-html                      : 0.02 sec
-[KNITR_END]   31/05/2026 21:44:35
-[KNITR_TOTAL] 62.8 sec
+[KNITR_END]   10/06/2026 10:22:07
+[KNITR_TOTAL] 68.8 sec
 
-Compilation totale terminee : 31/05/2026 21:44:35
-[TIMER] timer-final-html                    : 0.00 sec
+Compilation totale terminee : 10/06/2026 10:22:07
+[TIMER] timer-final-html                    : 0.01 sec
