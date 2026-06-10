@@ -273,13 +273,13 @@ Ce rapport fait partie d'un projet complet sur les statistiques et le clustering
 
 * 🌐 **Version Web interactive :** [Publication RPubs](https://rpubs.com/Albanpjy/esd113_complet_html_v7)
 * 💻 **Code source & Projet :** [Dépôt GitHub ESD113](https://albanpjy.github.io/ESD113/)
-* 📄 **Format PDF :** [Télécharger le rapport PDF](https://albanpjy.github.io/ESD113/esd113_complet_plus_18_pdf_posit.pdf)
+* 📄 **Format PDF :** [Télécharger le rapport PDF](https://albanpjy.github.io/ESD113/esd113_complet_plus_19_pdf_posit.pdf)
 :::
 ---
 
 # Introduction générale {.unnumbered #sec-intro-generale}
 
-Ce document a été réalisé dans le cadre de l'unité d'enseignement *ESD113-Probabilités et statistiques avec R*, dispensée au Conservatoire National des Arts et Métiers (CNAM) par Monsieur Karim KILANI, il constitue un rapport de référence méthodologique. Chaque concept y est présenté avec la rigueur : définitions formelles, justifications, implémentation en R et interprétation critique des résultats. Un recours significatif aux outils d'intelligence artificielle a permis de résoudre les problématiques complexes de mise en page avec précision et rapidité, tout en facilitant la structuration du contenu.contenu.
+Ce document a été réalisé dans le cadre de l'unité d'enseignement *ESD113-Probabilités et statistique avec R*, dispensée au Conservatoire National des Arts et Métiers (CNAM) par Monsieur Karim KILANI. Il constitue un rapport de référence méthodologique. Chaque concept y est présenté avec la rigueur d'un manuel académique : définitions formelles, justifications, implémentation en R et interprétation critique des résultats. Un recours significatif aux outils d'intelligence artificielle a permis de résoudre les problématiques complexes de mise en page avec précision et rapidité, tout en facilitant la structuration du contenu.
 
 Ce rapport fusionne trois volets complémentaires du cours :
 
@@ -321,9 +321,77 @@ Quarto, c'est comme un cahier de laboratoire numérique : on y écrit ses observ
 
 ### Mise en forme du texte en Markdown
 
-Quarto repose sur la syntaxe *Markdown* pour la mise en forme du texte. On peut écrire du texte en *gras* et en *italique*, insérer des listes, des tableaux, et bien sûr des formules mathématiques grâce à $\LaTeX$.
+Quarto repose sur la syntaxe *Markdown* pour la mise en forme du texte. On peut écrire du texte en **gras** et en *italique*, insérer des listes, des tableaux, et bien sûr des formules mathématiques grâce à $\LaTeX$. Passons en revue les commandes Markdown les plus utiles, selon la même convention pédagogique que pour les formules mathématiques présentées plus bas : chaque bloc grisé montre le *code source Markdown* tel qu'il est tapé dans le fichier `.qmd`, et le rendu produit s'affiche juste en dessous.
 
-Pour chaque formule ci-dessous, le bloc grisé montre le *code LaTeX source* tel qu'il apparaît dans le document `.qmd`, et le rendu est affiché juste en dessous. Cette double présentation est précieuse pour l'apprentissage : on voit à la fois ce qu'on écrit et ce que MathJax produit.
+*L'emphase* — la mise en valeur d'un mot s'obtient en l'entourant d'astérisques (une paire pour l'*italique*, deux pour le **gras**) ou d'accents graves pour le code :
+
+```markdown
+Du texte en **gras**, en *italique*, en ***gras italique***,
+et du `code en ligne` à chasse fixe.
+```
+
+Du texte en **gras**, en *italique*, en ***gras italique***, et du `code en ligne` à chasse fixe.
+
+*Les listes* — une liste à puces commence par `-` (ou `*`), une liste numérotée par `1.` ; une indentation crée un sous-niveau :
+
+```markdown
+- une puce
+- une autre puce
+  - une sous-puce indentée
+
+1. première étape
+2. deuxième étape
+```
+
+- une puce
+- une autre puce
+  - une sous-puce indentée
+
+1. première étape
+2. deuxième étape
+
+*Les liens et les citations* — un lien hypertexte s'écrit `[texte](url)` ; une ligne précédée du chevron `>` devient une citation mise en exergue :
+
+```markdown
+Le site du [CNAM](https://www.cnam.fr).
+
+> La statistique est la première des sciences inexactes.
+> — Edmond et Jules de Goncourt
+```
+
+Le site du [CNAM](https://www.cnam.fr).
+
+> La statistique est la première des sciences inexactes.
+> — Edmond et Jules de Goncourt
+
+*Les titres* — les croisillons `#` structurent le document : `#` pour une Partie, `##` pour une section, `###` pour une sous-section, et l'attribut `{.unnumbered}` retire un titre de la numérotation. Le code ci-dessous n'est volontairement *pas* rendu : insérer de vrais titres ici perturberait la numérotation du rapport.
+
+```markdown
+# Partie (niveau 1)
+## Section (niveau 2 — numérotée 1.1)
+### Sous-section (niveau 3 — numérotée 1.1.1)
+# Conclusion générale {.unnumbered}
+```
+
+*Les tableaux* — des barres verticales `|` délimitent les colonnes ; la ligne de tirets sépare l'en-tête du corps :
+
+```markdown
+| Syntaxe Markdown | Rendu obtenu |
+|------------------|--------------|
+| `**gras**`       | **gras**     |
+| `*italique*`     | *italique*   |
+| `` `code` ``     | `code`       |
+```
+
+| Syntaxe Markdown | Rendu obtenu |
+|------------------|--------------|
+| `**gras**`       | **gras**     |
+| `*italique*`     | *italique*   |
+| `` `code` ``     | `code`       |
+
+: Récapitulatif des principales commandes d'emphase Markdown {#tbl-markdown-base}
+
+Pour les formules mathématiques, Markdown délègue à $\LaTeX$ : tout ce qui est placé entre `$...$` (en ligne) ou `$$...$$` (centré) est interprété comme du code mathématique. Pour chaque formule ci-dessous, le bloc grisé montre le *code LaTeX source* tel qu'il apparaît dans le document `.qmd`, et le rendu est affiché juste en dessous. Cette double présentation est précieuse pour l'apprentissage : on voit à la fois ce qu'on écrit et ce que MathJax produit.
 
 *L'intégrale de Gauss* — résultat fondamental en probabilité et théorie des fonctions, qui établit que l'aire sous la courbe en cloche $e^{-x^2}$ vaut exactement $\sqrt{\pi}$ :
 
@@ -1132,7 +1200,7 @@ df_esperances |>
 
 ::: {.callout-tip}
 ### À retenir
-Le *taux de retour joueur (TRJ)* est la fraction de la mise que le joueur récupère *en moyenne* sur un très grand nombre de parties. Un TRJ de 50 % signifie que pour 1 € joué, le joueur récupère en moyenne 0,50 € et perd donc 0,50 €. Ce taux est encadré réglementairement par l'ARJEL (Autorité de régulation des jeux en ligne).
+Le *taux de retour joueur (TRJ)* est la fraction de la mise que le joueur récupère *en moyenne* sur un très grand nombre de parties. Un TRJ de 50 % signifie que pour 1 € joué, le joueur récupère en moyenne 0,50 € et perd donc 0,50 €. Ce taux est encadré réglementairement par l'ANJ (Autorité Nationale des Jeux, qui a succédé à l'ARJEL en 2020).
 :::
 
 ```{r plot-esperances}
@@ -1170,7 +1238,7 @@ df_esperances |>
 
 ::: {.callout-warning}
 ### Lecture du graphique
-Toutes les barres sont *sous la ligne pointillée rouge* (la mise de 1 €), confirmant que l'*espérance de gain est toujours négative pour le joueur*, quelle que soit la grille choisie. Le TRJ affiché au-dessus de chaque barre (en % de la mise) montre que la FDJ reverse entre 50 % et 60 % de la mise en gains — la différence constituant la marge opératrice.
+Toutes les barres sont *sous la ligne pointillée rouge* (la mise de 1 €), confirmant que l'*espérance de gain est toujours négative pour le joueur*, quelle que soit la grille choisie. Le TRJ affiché au-dessus de chaque barre (en % de la mise) montre que la FDJ reverse entre 47 % et 55 % de la mise en gains — la différence constituant la marge opératrice.
 :::
 
 ---
@@ -1322,9 +1390,9 @@ Ce volet a été réalisé dans le cadre de la même unité d'enseignement *ESD1
 
 ### Qu'est-ce que le clustering ?
 
-Imaginez une carte sur laquelle figurent des centaines de villes représentées uniquement par leurs coordonnées géographiques (latitude, longitude) — deux variables *quantitatives continues*. Votre mission : regrouper ces villes en régions *sans connaître à l'avance* les frontières administratives. Naturellement, vous mesureriez les distances physiques et réuniriez les villes proches les unes des autres. Sans le savoir, vous appliquez le principe de l'algorithme K-means : minimiser la distance euclidienne entre chaque point et le centre de son groupe (le centroïde, calculé comme la *moyenne géométrique* des coordonnées). C'est précisément parce que K-means repose sur ce calcul de distance que les variables doivent être *quantitatives et continues* — des attributs qualitatifs (couleur, catégorie) seraient incompatibles avec cette logique.
+Imaginez une carte sur laquelle figurent des centaines de villes représentées uniquement par leurs coordonnées géographiques (latitude, longitude) — deux variables *quantitatives continues*. Votre mission : regrouper ces villes en régions *sans connaître à l'avance* les frontières administratives. Naturellement, vous mesureriez les distances physiques et réuniriez les villes proches les unes des autres. Sans le savoir, vous appliquez le principe de l'algorithme K-means : minimiser la distance euclidienne entre chaque point et le centre de son groupe (le centroïde, calculé comme la *moyenne arithmétique* des coordonnées, axe par axe). C'est précisément parce que K-means repose sur ce calcul de distance que les variables doivent être *quantitatives et continues* — des attributs qualitatifs (couleur, catégorie) seraient incompatibles avec cette logique.
 
-En statistique, le *clustering* (ou *classification non supervisée*) consiste à regrouper automatiquement des observations similaires *sans connaitre à l'avance* les étiquettes ou catégories.
+En statistique, le *clustering* (ou *classification non supervisée*) consiste à regrouper automatiquement des observations similaires *sans connaître à l'avance* les étiquettes ou catégories.
 
 ::: {.callout-note}
 ### Analogie pédagogique
@@ -1381,11 +1449,11 @@ conflicts_prefer(dplyr::lag)
 
 ### Pourquoi simuler ?
 
-Évaluer une méthode de clustering sur des données réelles pose un problème fondamental : on ne connait pas les *vrais* groupes, puisque c'est précisément ce qu'on cherche. La simulation résout ce problème en créant un monde artificiel où *la vérité est connue à l'avance*.
+Évaluer une méthode de clustering sur des données réelles pose un problème fondamental : on ne connaît pas les *vrais* groupes, puisque c'est précisément ce qu'on cherche. La simulation résout ce problème en créant un monde artificiel où *la vérité est connue à l'avance*.
 
 ::: {.callout-tip}
 ### À retenir
-La simulation est le mannequin de crash-test de la statistique : on connait exactement les forces appliquées, et on mesure comment chaque algorithme s'en sort.
+La simulation est le mannequin de crash-test de la statistique : on connaît exactement les forces appliquées, et on mesure comment chaque algorithme s'en sort.
 :::
 
 ### Fondements mathématiques : la loi normale multivariée
@@ -1935,8 +2003,6 @@ La méthode hiérarchique est utile pour explorer la structure des données, mai
 
 ## Méthodes basées sur les modèles probabilistes {#sec-mclust}
 
-### Modèles de mélanges gaussiens : Mclust
-
 ::: {.callout-note}
 ### Analogie : du déterministe au probabiliste
 Le K-means affecte chaque observation à *un seul* groupe de façon déterministe :
@@ -1946,7 +2012,7 @@ au groupe 3 avec 4 %." Cette *appartenance probabiliste* est à la fois plus
 réaliste et plus informative.
 :::
 
-#### Le modèle de mélange gaussien (GMM)
+### Le modèle de mélange gaussien (GMM)
 
 `mclust` ajuste un *modèle de mélange gaussien* (GMM) : on suppose que la
 population est composée de $K$ sous-populations gaussiennes, chacune caractérisée
@@ -1958,7 +2024,7 @@ $$f(x_i) = \sum_{k=1}^{K} \pi_k \,
 
 avec $\sum_{k=1}^K \pi_k = 1$ et $\pi_k > 0$.
 
-#### L'algorithme EM
+### L'algorithme EM
 
 Les paramètres $\Theta = \{\pi_k, \boldsymbol{\mu}_k, \boldsymbol{\Sigma}_k\}_{k=1}^K$ sont
 estimés par maximum de vraisemblance via l'algorithme *EM* (Expectation-Maximisation) [@dempster1977],
@@ -1989,7 +2055,7 @@ $|\ell^{(t+1)} - \ell^{(t)}| < \varepsilon$ (défaut : $10^{-5}$ dans `mclust`).
 En pratique, on relance depuis plusieurs initialisations pour éviter les maxima locaux.
 :::
 
-#### Les 14 familles de modèles de covariance
+### Les 14 familles de modèles de covariance
 
 La richesse de `mclust` tient à sa paramétrisation par décomposition propre de $\boldsymbol{\Sigma}_k$ :
 
@@ -2000,7 +2066,7 @@ $\lambda_k$ contrôle le *volume*, $D_k$ l'*orientation*, $A_k$ la *forme*
 (V = Variable) chacune de ces trois composantes, `mclust` définit 14 familles
 de modèles (EII, VII, EEI, EEE, …, VVV).
 
-#### La vraisemblance : mesurer l'adéquation du modèle
+### La vraisemblance : mesurer l'adéquation du modèle
 
 La *log-vraisemblance* $\ell(\Theta)$ mesure à quel point le modèle ajusté
 "colle" aux données observées :
@@ -2023,7 +2089,7 @@ paramètres libres atteint toujours une vraisemblance au moins aussi élevée
 --- d'où la nécessité de la pénalisation du BIC.
 :::
 
-#### Les degrés de liberté : le coût de la complexité
+### Les degrés de liberté : le coût de la complexité
 
 Le paramètre $d$ dans la formule du BIC est le *nombre de paramètres libres*
 du modèle. Pour les données de Flynt & Dean ($p = 2$ variables, $K = 3$ groupes) :
@@ -2040,13 +2106,13 @@ de $d = 17$. Des familles plus contraintes (EEE, EVE…) partagent des
 paramètres entre groupes et comptent moins de degrés de liberté.
 
 ::: {.callout-tip title="À retenir"}
-Le modèle sélectionné par `mclust` expose son $d$ via `mc_model$df` en R.
+Le modèle sélectionné par `mclust` expose son $d$ via `mc_model_v2$df` en R.
 Sur $n = 600$ observations, $\ln(600) \approx 6{,}4$ : chaque paramètre
 supplémentaire coûte environ *6,4 points de BIC*, ce qui rend la
 pénalisation très efficace pour écarter les modèles sur-paramétrés.
 :::
 
-#### Sélection automatique via le BIC
+### Sélection automatique via le BIC
 
 `mclust` [@fraley2002; @scrucca2016] sélectionne simultanément $K$ et la
 famille de covariance en maximisant le BIC de Fraley-Raftery [@schwarz1978] :
